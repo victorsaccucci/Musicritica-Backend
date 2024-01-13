@@ -20,8 +20,9 @@ public class MusicaController {
         return service.buscarInfoMusica(artista, musica);
     }
 
-  @GetMapping("/buscar/{musica}")
-    public List<MusicaSearch> buscarMusica(@PathVariable String musica) {
-        return service.buscarMusicaSearch(musica);
+    @GetMapping("/buscar/{musica}/{page}/{limit}")
+    public List<MusicaSearch> buscarMusica(@PathVariable String musica, @PathVariable int page, @PathVariable int limit) {
+        return service.buscarMusicaSearch(musica, page, limit);
     }
+
 }

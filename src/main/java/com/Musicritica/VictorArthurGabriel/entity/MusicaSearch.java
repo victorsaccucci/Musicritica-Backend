@@ -8,4 +8,5 @@ import lombok.Data;
 public class MusicaSearch {
     private String name;
     private String artist;
+
 }

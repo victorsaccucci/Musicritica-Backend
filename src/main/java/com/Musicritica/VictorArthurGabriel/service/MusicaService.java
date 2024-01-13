@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -34,9 +35,9 @@ public class MusicaService {
 
 
 
-    public List<MusicaSearch> buscarMusicaSearch(String musica) {
-        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json",
-                urlLastFM, musica, apiKey);
+    public List<MusicaSearch> buscarMusicaSearch(String musica, int page, int limit) {
+        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json&page=%d&limit=%d",
+                urlLastFM, musica, apiKey, page, limit);
 
         TrackSearchResult trackSearchResult = restTemplate.getForObject(url, TrackSearchResult.class);
 
@@ -45,8 +46,9 @@ public class MusicaService {
             return trackSearchResult.getResults().getTrackMatches().getTracks();
         }
 
-        return null;
+        return Collections.emptyList();
     }
+
 
 
     private Musica mapToMusica(LastFMTrack lastFMTrack) {
