@@ -32,6 +32,23 @@ public class MusicaService {
         return null;
     }
 
+
+
+    public List<MusicaSearch> buscarMusicaSearch(String musica) {
+        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json",
+                urlLastFM, musica, apiKey);
+
+        TrackSearchResult trackSearchResult = restTemplate.getForObject(url, TrackSearchResult.class);
+
+        if (trackSearchResult != null && trackSearchResult.getResults() != null
+                && trackSearchResult.getResults().getTrackMatches() != null) {
+            return trackSearchResult.getResults().getTrackMatches().getTracks();
+        }
+
+        return null;
+    }
+
+
     private Musica mapToMusica(LastFMTrack lastFMTrack) {
         Musica musica = new Musica();
         musica.setNome(lastFMTrack.getName());
