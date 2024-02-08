@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,19 +36,52 @@ public class MusicaService {
 
 
 
-    public List<MusicaSearch> buscarMusicaSearch(String musica, int page, int limit) {
-        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json&page=%d&limit=%d",
-                urlLastFM, musica, apiKey, page, limit);
+    public List<MusicaSearch> buscarMusicaSearch(String musica) {
+        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json",
+                urlLastFM, musica, apiKey);
 
         TrackSearchResult trackSearchResult = restTemplate.getForObject(url, TrackSearchResult.class);
 
+        List<MusicaSearch> musicas = new ArrayList<>();
+
         if (trackSearchResult != null && trackSearchResult.getResults() != null
                 && trackSearchResult.getResults().getTrackMatches() != null) {
-            return trackSearchResult.getResults().getTrackMatches().getTracks();
+            for (MusicaSearch musicaSearch : trackSearchResult.getResults().getTrackMatches().getTracks()) {
+                MusicaSearch novaMusica = new MusicaSearch();
+                novaMusica.setName(musicaSearch.getName());
+                novaMusica.setArtist(musicaSearch.getArtist());
+                novaMusica.setImage(getExtralargeImages(musicaSearch.getImage()));
+                musicas.add(novaMusica);
+            }
         }
 
-        return Collections.emptyList();
+        return musicas;
     }
+
+    private List<LastFMImage> getExtralargeImages(List<LastFMImage> images) {
+        List<LastFMImage> extralargeImages = new ArrayList<>();
+        for (LastFMImage image : images) {
+            if ("extralarge".equals(image.getSize())) {
+                extralargeImages.add(image);
+                break;
+            }
+        }
+        return extralargeImages;
+    }
+
+//    public List<MusicaSearch> buscarMusicaSearch(String musica, int page, int limit) {
+//        String url = String.format("%s?method=track.search&track=%s&api_key=%s&format=json&page=%d&limit=%d",
+//                urlLastFM, musica, apiKey, page, limit);
+//
+//        TrackSearchResult trackSearchResult = restTemplate.getForObject(url, TrackSearchResult.class);
+//
+//        if (trackSearchResult != null && trackSearchResult.getResults() != null
+//                && trackSearchResult.getResults().getTrackMatches() != null) {
+//            return trackSearchResult.getResults().getTrackMatches().getTracks();
+//        }
+//
+//        return Collections.emptyList();
+//    }
 
 
 
