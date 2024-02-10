@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-@RequestMapping(value = "/spotfy")
+@RequestMapping(value = "/spotify")
 @CrossOrigin(origins = {"http://localhost:4200","http://localhost:5500"}, maxAge = 3600)
 public class SpotifyController {
 

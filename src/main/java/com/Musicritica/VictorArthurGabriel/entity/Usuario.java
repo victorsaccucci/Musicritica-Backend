@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -20,6 +21,6 @@ public class Usuario {
     private String email;
     private String senha;
     private String imagem;
-    private Date dt_cadastro;
+    private String dt_cadastro;
 
 }
