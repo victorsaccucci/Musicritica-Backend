@@ -1,10 +1,12 @@
-package com.Musicritica.VictorArthurGabriel.entity;
+package com.Musicritica.VictorArthurGabriel.entity.spotfy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LastFMResponse {
-    private LastFMTrack track;
+class Tracks {
+    private List<Item> items;
 }

@@ -1,7 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
-import com.Musicritica.VictorArthurGabriel.entity.Musica;
-import com.Musicritica.VictorArthurGabriel.entity.MusicaSearch;
+import com.Musicritica.VictorArthurGabriel.entity.lastfm.Musica;
+import com.Musicritica.VictorArthurGabriel.entity.lastfm.MusicaSearch;
 import com.Musicritica.VictorArthurGabriel.service.MusicaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

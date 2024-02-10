@@ -1,4 +1,4 @@
-package com.Musicritica.VictorArthurGabriel.entity;
+package com.Musicritica.VictorArthurGabriel.entity.lastfm;
 import jakarta.persistence.*;
 import lombok.Data;
 
