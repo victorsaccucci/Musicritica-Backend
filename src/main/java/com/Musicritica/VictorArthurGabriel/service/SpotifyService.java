@@ -1,21 +1,19 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
-import com.Musicritica.VictorArthurGabriel.entity.spotfy.SpotifySearchResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class SpotfyService {
+public class SpotifyService {
 
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
     private final RestTemplate restTemplate;
 
     private String accessToken = "BQBY6NUPoBk4AhufUGfeR9i-wpzV_G_nSvFtAiTSnOUuFfDKt4zD_zICs3KsfCXV1Lg5-jVBdUvZgSrDQ_nQJ3TRTKJoM970ZfTHIAuh2e2hVrvgCW0";
 
-    public SpotfyService(RestTemplate restTemplate) {
+    public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
