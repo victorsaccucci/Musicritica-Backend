@@ -13,7 +13,7 @@ public class SpotfyService {
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
     private final RestTemplate restTemplate;
 
-    private String accessToken = "BQBY6NUPoBk4AhufUGfeR9i-wpzV_G_nSvFtAiTSnOUuFfDKt4zD_zICs3KsfCXV1Lg5-jVBdUvZgSrDQ_nQJ3TRTKJoM970ZfTHIAuh2e2hVrvgCW0";
+    private String accessToken = "BQC0Jk8wFH7jJ2qEG7TOpAcBmMSIR0zcvwl7aAjraLx4aZbbsNRZ_sN3gj2tccohf5jvOMWS-BLVsJaskhmu_pdLx0N0m8kvYpVomjhzBAi1Xfg_KdU";
 
     public SpotfyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
