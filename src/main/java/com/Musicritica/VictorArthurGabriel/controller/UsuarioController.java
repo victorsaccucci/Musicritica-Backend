@@ -14,11 +14,21 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
-    @GetMapping(value = "/{id}")
-    public Usuario buscarPeloId(@PathVariable Long id) { return service.buscarId(id); }
-
     @PostMapping
     public Usuario salvar(@RequestBody Usuario novoUsuario) throws MusicriticaException {
         return service.salvar(novoUsuario);
     }
+    @GetMapping(value = "/{id}")
+    public Usuario buscarPeloId(@PathVariable Long id) { return service.buscarId(id); }
+
+    @PutMapping
+    public boolean atualizar(@RequestBody Usuario usuario) throws MusicriticaException{
+        return service.atualizar(usuario) != null;
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean excluir(@PathVariable Long id){
+        return service.excluir(id);
+    }
+
 }

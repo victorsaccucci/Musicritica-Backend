@@ -1,4 +1,4 @@
-package com.Musicritica.VictorArthurGabriel.entity.spotfy;
+package com.Musicritica.VictorArthurGabriel.entity.spotify;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
