@@ -88,10 +88,10 @@ public class MusicaService {
         Musica musica = new Musica();
         musica.setNome(lastFMTrack.getName());
         musica.setAlbum(mapToAlbum(lastFMTrack.getAlbum()));
+        musica.setWiki(lastFMTrack.getWiki());
         musica.setUrl(lastFMTrack.getUrl());
         musica.setDuracao(lastFMTrack.getDuration());
         musica.setArtista(lastFMTrack.getArtist().getName());
-
         return musica;
     }
 

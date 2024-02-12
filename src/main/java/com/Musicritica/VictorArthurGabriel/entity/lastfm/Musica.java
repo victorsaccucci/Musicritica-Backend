@@ -3,8 +3,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-@Entity
-@Table(name = "musica")
 public class Musica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +16,5 @@ public class Musica {
     private String duracao;
     @Transient
     private LastFMAlbum album;
+    private Wiki wiki;
 }

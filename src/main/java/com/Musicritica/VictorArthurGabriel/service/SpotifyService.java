@@ -11,7 +11,7 @@ public class SpotifyService {
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
     private final RestTemplate restTemplate;
 
-    private String accessToken = "BQC0Jk8wFH7jJ2qEG7TOpAcBmMSIR0zcvwl7aAjraLx4aZbbsNRZ_sN3gj2tccohf5jvOMWS-BLVsJaskhmu_pdLx0N0m8kvYpVomjhzBAi1Xfg_KdU";
+    private String accessToken = "BQD5syLnwskdHgvDNjnkFfxiEosOaUckvLhyYl1GjI4E272h3jg4Luw42Cv60QEOp_1bwKvRaXzaWNb9FMQ8qOLcuD7I2AOFX56YtJZJUvTr8TRzODU";
 
     public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
