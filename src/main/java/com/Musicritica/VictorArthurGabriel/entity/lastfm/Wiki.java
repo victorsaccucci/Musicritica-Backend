@@ -5,12 +5,8 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LastFMTrack {
-    private String name;
-    private String url;
-    private String duration;
-    private LastFMArtist artist;
-    private LastFMAlbum album;
-    private Wiki wiki;
+public class Wiki {
+    private String published;
+    private String summary;
+    private String content;
 }
-
