@@ -1,37 +1,42 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
-import com.Musicritica.VictorArthurGabriel.entity.Usuario;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.List;
 
 @Service
-public class UsuarioService {
+@AllArgsConstructor
+public class UsuarioService{
 
     @Autowired
     private UsuarioRepository repository;
 
     public Usuario buscarId(Long id){ return repository.buscarPeloId(id);}
 
-    public Usuario salvar(Usuario novoUsuario) throws MusicriticaException {
-        validarCamposObrigatorios(novoUsuario);
-
-        if (repository.existsByEmail(novoUsuario.getEmail())){
-            throw new MusicriticaException("Já existe um usuário cadastrado com esse email!");
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String dataFormatada = LocalDateTime.now().format(formatter);
-
-        novoUsuario.setDt_cadastro(dataFormatada);
-
-        return repository.save(novoUsuario);
-    }
+//    public Usuario salvar(Usuario novoUsuario) throws MusicriticaException {
+//        validarCamposObrigatorios(novoUsuario);
+//
+//        if (repository.existsByEmail(novoUsuario.getEmail())){
+//            throw new MusicriticaException("Já existe um usuário cadastrado com esse email!");
+//        }
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//        String dataFormatada = LocalDateTime.now().format(formatter);
+//
+//        novoUsuario.setDt_cadastro(dataFormatada);
+//
+//        return repository.save(novoUsuario);
+//    }
 
     public Usuario atualizar(Usuario usuario) throws MusicriticaException{
         validarCamposObrigatorios(usuario);
@@ -59,5 +64,10 @@ public class UsuarioService {
             return "Informe o " +nomeCampo + "\n";
         }
         return "";
+    }
+
+
+    public List<Usuario> listarTodos() {
+        return repository.findAll();
     }
 }
