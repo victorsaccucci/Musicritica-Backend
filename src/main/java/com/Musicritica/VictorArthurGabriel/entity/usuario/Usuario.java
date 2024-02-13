@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "usuario")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@AllArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -27,20 +28,20 @@ public class Usuario implements UserDetails {
     private String imagem_perfil;
     private String imagem_background;
     private String dt_cadastro;
-    private CargoUsuario cargo;
+    private CargoUsuario role;
 
-    public Usuario(String nome, String email, String senha, CargoUsuario cargo, String dt_cadastro){
+    public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro){
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.cargo = cargo;
+        this.role = role;
         this.dt_cadastro = dt_cadastro;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.cargo == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("USUARIO"));
-        else return List.of(new SimpleGrantedAuthority("USUARIO"));
+        if(this.role == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
     @Override
     public String getPassword() {
