@@ -1,5 +1,6 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
+import com.Musicritica.VictorArthurGabriel.entity.usuario.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
@@ -39,7 +40,6 @@ public class UsuarioService{
 //    }
 
     public Usuario atualizar(Usuario usuario) throws MusicriticaException{
-        validarCamposObrigatorios(usuario);
         return repository.save(usuario);
     }
 
@@ -48,15 +48,22 @@ public class UsuarioService{
         return true;
     }
 
-    private void validarCamposObrigatorios(Usuario usuario) throws MusicriticaException{
+    private void validarCamposObrigatorios(RegistroDTO registroDTO) throws MusicriticaException{
         String mensagemValidacao = "";
-        mensagemValidacao += validarCampoString(usuario.getEmail(), "email");
-        mensagemValidacao += validarCampoString(usuario.getNome(), "nome");
-        mensagemValidacao += validarCampoString(usuario.getSenha(), "senha");
+        mensagemValidacao += validarCampoString(registroDTO.email(), "email");
+        mensagemValidacao += validarCampoString(registroDTO.nome(), "nome");
+        mensagemValidacao += validarCampoString(registroDTO.senha(), "senha");
 
         if (!mensagemValidacao.isEmpty()){
             throw new MusicriticaException(mensagemValidacao);
         }
+    }
+
+    public void validarRegistro(RegistroDTO registroDTO) throws MusicriticaException {
+        validarCamposObrigatorios(registroDTO);
+        if (repository.existsByEmail(registroDTO.email())){
+          throw new MusicriticaException("Já existe um usuário cadastrado com esse email!");
+       }
     }
 
     private String validarCampoString(String valorCampo, String nomeCampo) {
