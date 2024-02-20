@@ -1,5 +1,6 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.service.ScraperService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
@@ -30,6 +31,11 @@ public class SpotifyController {
         return searchResponses;
 
     }
+    @GetMapping
+    public Genres getAllGenres() {
+        return spotifyService.getAllGenres();
+    }
+
 
     @GetMapping(value = "/buscar/{musica}")
     public SpotifySearchResponse searchTracks(@PathVariable String musica) {

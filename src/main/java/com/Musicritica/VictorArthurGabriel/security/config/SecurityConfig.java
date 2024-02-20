@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/usuario/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuario").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/spotify/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
