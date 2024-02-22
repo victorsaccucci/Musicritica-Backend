@@ -28,6 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/esqueceuSenha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/redefinirSenha/{token}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/usuario/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuario").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/spotify/**").permitAll()

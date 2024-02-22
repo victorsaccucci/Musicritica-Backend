@@ -1,5 +1,6 @@
 package com.Musicritica.VictorArthurGabriel.entity.usuario;
 
+import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,8 @@ public class Usuario implements UserDetails {
     private String imagem_background;
     private String dt_cadastro;
     private CargoUsuario role;
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private PasswordResetToken passwordResetToken;
 
     public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro){
         this.nome = nome;
@@ -72,4 +75,5 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

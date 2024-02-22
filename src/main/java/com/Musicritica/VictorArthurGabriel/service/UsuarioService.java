@@ -1,47 +1,98 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
+import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
+import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UsuarioService{
+public class UsuarioService implements UserDetailsService{
 
     @Autowired
     private UsuarioRepository repository;
 
-    public Usuario buscarId(Long id){ return repository.buscarPeloId(id);}
+    @Autowired
+    JavaMailSender javaMailSender;
 
-//    public Usuario salvar(Usuario novoUsuario) throws MusicriticaException {
-//        validarCamposObrigatorios(novoUsuario);
-//
-//        if (repository.existsByEmail(novoUsuario.getEmail())){
-//            throw new MusicriticaException("Já existe um usuário cadastrado com esse email!");
-//        }
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//        String dataFormatada = LocalDateTime.now().format(formatter);
-//
-//        novoUsuario.setDt_cadastro(dataFormatada);
-//
-//        return repository.save(novoUsuario);
-//    }
+    @Autowired
+    PasswordTokenRepository tokenRepository;
 
-    public Usuario atualizar(Usuario usuario) throws MusicriticaException{
-        return repository.save(usuario);
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return repository.findByEmail(email);
     }
+
+    public String sendEmail(Usuario user) {
+        try {
+            String resetLink = generateResetToken(user);
+
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setFrom("sauer.arthur@gmail.com");
+            msg.setTo(user.getEmail());
+
+            msg.setSubject("Musicrítica - Recuperação de Senha");
+            msg.setText("Olá! \n\n" + "Por favor, clique no link para redefinir sua senha:" + resetLink + ". \n\n"
+                    + "Atenciosamente \n" + "Musicrítica");
+
+            javaMailSender.send(msg);
+
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
+    public String generateResetToken(Usuario user) {
+        UUID uuid = UUID.randomUUID();
+        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+        LocalDateTime expiryDateTime = currentDateTime.plusMinutes(30);
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setUsuario(user);
+        resetToken.setToken(uuid.toString());
+        resetToken.setExpiryDateTime(expiryDateTime);
+        resetToken.setUsuario(user);
+        PasswordResetToken token = tokenRepository.save(resetToken);
+        if (token != null) {
+            String endpointUrl = "http://localhost:8080/auth/redefinirSenha";
+            return endpointUrl + "/" + resetToken.getToken();
+        }
+        return "";
+    }
+
+    public void markTokenAsExpired(PasswordResetToken token) {
+        token.setExpiryDateTime(LocalDateTime.now().minusDays(1));
+        tokenRepository.save(token);
+        //hasExpired(token);
+    }
+
+//    public boolean hasExpired(PasswordResetToken token) {
+//        LocalDateTime expiryDateTime = token.getExpiryDateTime();
+//        LocalDateTime currentDateTime = LocalDateTime.now();
+//        boolean hasExpired = currentDateTime.isAfter(expiryDateTime);
+//        if (hasExpired) {
+//            tokenRepository.delete(token);
+//        }
+//        return hasExpired;
+//    }
 
     public boolean excluir(Long id){
         repository.deleteById(id.longValue());
@@ -73,8 +124,13 @@ public class UsuarioService{
         return "";
     }
 
-
     public List<Usuario> listarTodos() {
         return repository.findAll();
     }
+    public Usuario atualizar(Usuario usuario) throws MusicriticaException{
+        return repository.save(usuario);
+    }
+
+    public Usuario buscarId(Long id){ return repository.buscarPeloId(id);}
+
 }
