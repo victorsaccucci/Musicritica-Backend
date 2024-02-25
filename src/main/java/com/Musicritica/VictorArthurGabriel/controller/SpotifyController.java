@@ -1,5 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.service.ScraperService;
@@ -29,13 +31,21 @@ public class SpotifyController {
         List<String> musicNames = scrappingResults.stream().map(ScraperService.ScrappingResult::getMusicName).collect(Collectors.toList());
         List<SpotifySearchResponse> searchResponses = spotifyService.searchTracks(musicNames);
         return searchResponses;
-
     }
     @GetMapping
     public Genres getAllGenres() {
         return spotifyService.getAllGenres();
     }
 
+    @GetMapping(value = "/descobrir/{generoPrimario}/{generoSecundario}")
+    public TrackData spotifyDescobrirMusica(@PathVariable String generoPrimario, @PathVariable String generoSecundario){
+        return spotifyService.spotifyDescobrirMusica(generoPrimario, generoSecundario);
+    }
+
+    @GetMapping(value = "/buscar/album/{id}")
+    public AlbumBuscado getAlbum(@PathVariable String id){
+        return spotifyService.getAlbum(id);
+    }
 
     @GetMapping(value = "/buscar/{musica}")
     public SpotifySearchResponse searchTracks(@PathVariable String musica) {

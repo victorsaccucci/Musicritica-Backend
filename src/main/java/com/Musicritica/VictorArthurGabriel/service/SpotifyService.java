@@ -1,5 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import org.springframework.http.*;
@@ -15,11 +17,11 @@ public class SpotifyService {
 
     private final String SPOTIFY_API_URL_WITH_LIMIT = "https://api.spotify.com/v1/search?q=%s&type=track&limit=1";
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
-
     private final String SPOTIFY_GENRES_URL = "https://api.spotify.com/v1/recommendations/available-genre-seeds";
+    private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
+    private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-
-    private String accessToken = "BQCkuAZgqcdruAyuYjjueyUS3x6csTl8od3AA7nLtnEbnUIn8CY0zPMq7d2Q8YvTy5KAiOXE8qOM3KIQadmawlMrS63hDjoqKZ1Ol0NR9f3dAkXTMPI";
+    private String accessToken = "BQCweyOkMqbZ-7CeMvyBR2kt26hFkgamiVnZ4r9WaKcjigq_w5RNBHPBjihS0N_dBwPdmJo-a6pE_Ua7DY7tGKFBsiksiu3-vgDLz_8AttjREo_OPU8";
     HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -57,6 +59,39 @@ public class SpotifyService {
 
         return response.getBody();
     }
+
+    public AlbumBuscado getAlbum(String id) {
+        String url = String.format(SPOTIFY_GET_ALBUM, id);
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<AlbumBuscado> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                AlbumBuscado.class
+        );
+
+        return response.getBody();
+    }
+    public TrackData spotifyDescobrirMusica(String generoPrimario, String generoSecundario) {
+        String url = String.format(SPOTIFY_RECOMMENDATION_URL, generoPrimario, generoSecundario);
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<TrackData> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                TrackData.class
+        );
+        return response.getBody();
+    }
+
     public Genres getAllGenres() {
         String url = String.format(SPOTIFY_GENRES_URL);
 
@@ -81,8 +116,6 @@ public class SpotifyService {
             SpotifySearchResponse response = searchTrack(musicName);
             searchResponses.add(response);
         }
-
         return searchResponses;
     }
-
 }
