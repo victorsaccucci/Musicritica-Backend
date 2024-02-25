@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+public
 class Image {
     private int height;
     private String url;
