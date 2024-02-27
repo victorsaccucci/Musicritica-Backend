@@ -21,7 +21,7 @@ public class SpotifyService {
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-    private String accessToken = "BQCweyOkMqbZ-7CeMvyBR2kt26hFkgamiVnZ4r9WaKcjigq_w5RNBHPBjihS0N_dBwPdmJo-a6pE_Ua7DY7tGKFBsiksiu3-vgDLz_8AttjREo_OPU8";
+    private String accessToken = "BQBwyeow7JdGAZDt73iuF4ZE0RXRDUz2aL_bkbwc7ylNn6veFi031kV5lOx-7_kqxiIwmPSBYod6MOu9Ucsu0x90lffr27tvw5HAHuMCGh4snKxKEG0";
     HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

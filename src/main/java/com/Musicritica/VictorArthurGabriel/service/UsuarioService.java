@@ -8,6 +8,7 @@ import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,12 +40,13 @@ public class UsuarioService implements UserDetailsService{
         return repository.findByEmail(email);
     }
 
+
     public String sendEmail(Usuario user) {
         try {
             String resetLink = generateResetToken(user);
 
             SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setFrom("sauer.arthur@gmail.com");
+            msg.setFrom("musicritica01@gmail.com");
             msg.setTo(user.getEmail());
 
             msg.setSubject("Musicrítica - Recuperação de Senha");

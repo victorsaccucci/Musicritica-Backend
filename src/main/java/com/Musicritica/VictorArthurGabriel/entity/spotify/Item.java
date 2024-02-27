@@ -8,4 +8,5 @@ import lombok.Data;
 class Item {
     private String name;
     private Album album;
+    private String id;
 }
