@@ -7,4 +7,5 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemSemAlbum {
     private String name;
+    private String id;
 }

@@ -52,4 +52,6 @@ public class SpotifyController {
         return spotifyService.searchTracksWithNoLimit(musica);
     }
 
+    //criar novo metodo para buscar uma musica pelo id do spotify.
+
 }
