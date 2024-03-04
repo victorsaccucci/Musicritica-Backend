@@ -26,7 +26,9 @@ public class Usuario implements UserDetails {
     private String nome;
     private String email;
     private String senha;
-    private String imagem_perfil;
+    @Lob
+    private byte[] imagem_perfil;
+    @Lob
     private String imagem_background;
     private String dt_cadastro;
     private CargoUsuario role;
@@ -39,6 +41,9 @@ public class Usuario implements UserDetails {
         this.senha = senha;
         this.role = role;
         this.dt_cadastro = dt_cadastro;
+    }
+
+    public Usuario(String nome, String email, String encryptedPassword, CargoUsuario cargo, String dataFormatada, byte[] imagem_perfil) {
     }
 
     @Override

@@ -17,7 +17,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -50,7 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity register(@RequestBody @Valid RegistroDTO data){
+    public ResponseEntity register(@RequestParam("imagem_perfil") MultipartFile imagemPerfil, @RequestBody @Valid RegistroDTO data){
         try {
             usuarioService.validarRegistro(data);
         } catch (MusicriticaException e) {
@@ -62,9 +64,16 @@ public class AuthenticationController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String dataFormatada = LocalDateTime.now().format(formatter);
 
+        byte[] bytesImagemPerfil;
+        try{
+            bytesImagemPerfil = imagemPerfil.getBytes();
+        } catch (IOException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha ao processar a imagem!");
+        }
+
         CargoUsuario cargo = CargoUsuario.USER;
 
-        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada);
+        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, bytesImagemPerfil);
 
 
         this.repository.save(novoUsuario);
