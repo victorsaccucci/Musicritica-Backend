@@ -27,6 +27,7 @@ public class Usuario implements UserDetails {
     private String email;
     private String senha;
     @Lob
+    @Column(name = "imagem_perfil", columnDefinition = "LONGBLOB")
     private byte[] imagem_perfil;
     @Lob
     private String imagem_background;
@@ -41,9 +42,6 @@ public class Usuario implements UserDetails {
         this.senha = senha;
         this.role = role;
         this.dt_cadastro = dt_cadastro;
-    }
-
-    public Usuario(String nome, String email, String encryptedPassword, CargoUsuario cargo, String dataFormatada, byte[] imagem_perfil) {
     }
 
     @Override
