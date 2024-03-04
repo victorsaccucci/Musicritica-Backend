@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/usuario/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/usuario").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/spotify/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/spotify/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
                         .anyRequest().authenticated()
                 )

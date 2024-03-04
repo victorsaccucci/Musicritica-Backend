@@ -1,5 +1,6 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
+import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
@@ -7,9 +8,15 @@ import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.service.ScraperService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,14 +31,37 @@ public class SpotifyController {
     @Autowired
     private ScraperService scraperService;
 
+    private boolean saveTopChartsCalled = false;
+
     @GetMapping("/topCharts")
     public List<SpotifySearchResponse> getTopCharts() {
-        scraperService.scrape();
-        List<ScraperService.ScrappingResult> scrappingResults = scraperService.getScrappingResults();
-        List<String> musicNames = scrappingResults.stream().map(ScraperService.ScrappingResult::getMusicName).collect(Collectors.toList());
+        List<TopCharts> topCharts = spotifyService.getTopCharts();
+        List<String> musicNames = topCharts.stream().map(TopCharts::getNome_musica).collect(Collectors.toList());
         List<SpotifySearchResponse> searchResponses = spotifyService.searchTracks(musicNames);
         return searchResponses;
     }
+
+    @PostMapping
+    public ResponseEntity<String> saveTopCharts (){
+        LocalDate today = LocalDate.now();
+        if (today.getDayOfWeek() != DayOfWeek.SUNDAY) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às sextas-feiras.");
+        }
+
+        if (saveTopChartsCalled) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método já foi chamado nesta sexta-feira.");
+        }
+
+        scraperService.scrape();
+        List<ScraperService.ScrappingResult> scrappingResults = scraperService.getScrappingResults();
+        List<String> musicNames = scrappingResults.stream().map(ScraperService.ScrappingResult::getMusicName).collect(Collectors.toList());
+        spotifyService.saveTopCharts(musicNames);
+
+        saveTopChartsCalled = true;
+
+        return ResponseEntity.ok("Operação realizada com sucesso.");
+    }
+
     @GetMapping
     public Genres getAllGenres() {
         return spotifyService.getAllGenres();
@@ -51,7 +81,5 @@ public class SpotifyController {
     public SpotifySearchResponse searchTracks(@PathVariable String musica) {
         return spotifyService.searchTracksWithNoLimit(musica);
     }
-
-    //criar novo metodo para buscar uma musica pelo id do spotify.
 
 }
