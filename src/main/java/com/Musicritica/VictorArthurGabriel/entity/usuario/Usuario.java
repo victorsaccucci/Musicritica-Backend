@@ -26,7 +26,10 @@ public class Usuario implements UserDetails {
     private String nome;
     private String email;
     private String senha;
-    private String imagem_perfil;
+    @Lob
+    @Column(name = "imagem_perfil", columnDefinition = "LONGBLOB")
+    private byte[] imagem_perfil;
+    @Lob
     private String imagem_background;
     private String dt_cadastro;
     private CargoUsuario role;

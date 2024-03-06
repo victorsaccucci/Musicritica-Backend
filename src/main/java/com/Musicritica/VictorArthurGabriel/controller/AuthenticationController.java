@@ -17,9 +17,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("auth")
@@ -50,25 +53,31 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity register(@RequestBody @Valid RegistroDTO data){
+    public ResponseEntity<?> register(@Valid RegistroDTO data, @RequestParam("imagem_perfil") MultipartFile imagem_perfil){
         try {
             usuarioService.validarRegistro(data);
         } catch (MusicriticaException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+        try {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            String dataFormatada = LocalDateTime.now().format(formatter);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String dataFormatada = LocalDateTime.now().format(formatter);
+            CargoUsuario cargo = CargoUsuario.USER;
 
-        CargoUsuario cargo = CargoUsuario.USER;
+            Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada);
 
-        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada);
+            if (data.imagem_perfil() != null && !data.imagem_perfil().isEmpty()) {
+                novoUsuario.setImagem_perfil(data.imagem_perfil().getBytes());
+            }
 
-
-        this.repository.save(novoUsuario);
-        return ResponseEntity.ok().build();
+            this.repository.save(novoUsuario);
+            return ResponseEntity.ok().build();
+        } catch (IOException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a imagem.");
+        }
     }
 
     @PostMapping("/esqueceuSenha")
