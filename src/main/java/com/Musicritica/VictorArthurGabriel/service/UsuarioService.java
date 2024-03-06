@@ -3,23 +3,29 @@ package com.Musicritica.VictorArthurGabriel.service;
 import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.UsuarioDTO;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.UsuarioUpdateDTO;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,18 +41,20 @@ public class UsuarioService implements UserDetailsService{
     @Autowired
     PasswordTokenRepository tokenRepository;
 
+    @Autowired
+    TokenService tokenService;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email);
     }
-
 
     public String sendEmail(Usuario user) {
         try {
             String resetLink = generateResetToken(user);
 
             SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setFrom("musicritica01@gmail.com");
+            msg.setFrom("sauer.arthur@gmail.com");
             msg.setTo(user.getEmail());
 
             msg.setSubject("Musicrítica - Recuperação de Senha");
@@ -96,6 +104,17 @@ public class UsuarioService implements UserDetailsService{
 //        return hasExpired;
 //    }
 
+    public void atualizar(UserDetails userDetails, UsuarioDTO usuarioDTO){
+        String email = userDetails.getUsername();
+
+        Usuario usuario = (Usuario) repository.findByEmail(email);
+
+        usuario.setNome(usuarioDTO.getNome());
+        usuario.setImagem_perfil(usuario.getImagem_perfil());
+
+        repository.save(usuario);
+    }
+
     public boolean excluir(Long id){
         repository.deleteById(id.longValue());
         return true;
@@ -128,9 +147,6 @@ public class UsuarioService implements UserDetailsService{
 
     public List<Usuario> listarTodos() {
         return repository.findAll();
-    }
-    public Usuario atualizar(Usuario usuario) throws MusicriticaException{
-        return repository.save(usuario);
     }
 
     public Usuario buscarId(Long id){ return repository.buscarPeloId(id);}
