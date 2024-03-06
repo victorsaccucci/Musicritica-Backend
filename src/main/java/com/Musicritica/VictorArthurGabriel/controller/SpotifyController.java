@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
 import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
+import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
@@ -33,6 +34,16 @@ public class SpotifyController {
 
     private boolean saveTopChartsCalled = false;
 
+    private boolean saveTopChartsCalledYoutube = false;
+
+    @GetMapping("/topChartsYoutube")
+    public List<SpotifySearchResponse> getTopChartsYoutube() {
+        List<TopChartsYoutube> topCharts = spotifyService.getTopChartsYoutube();
+        List<String> musicNames = topCharts.stream().map(TopChartsYoutube::getNome_musica).collect(Collectors.toList());
+        List<SpotifySearchResponse> searchResponses = spotifyService.searchTracks(musicNames);
+        return searchResponses;
+    }
+
     @GetMapping("/topCharts")
     public List<SpotifySearchResponse> getTopCharts() {
         List<TopCharts> topCharts = spotifyService.getTopCharts();
@@ -44,12 +55,12 @@ public class SpotifyController {
     @PostMapping
     public ResponseEntity<String> saveTopCharts (){
         LocalDate today = LocalDate.now();
-        if (today.getDayOfWeek() != DayOfWeek.SUNDAY) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às sextas-feiras.");
+        if (today.getDayOfWeek() != DayOfWeek.WEDNESDAY) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às segundas-feiras.");
         }
 
         if (saveTopChartsCalled) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método já foi chamado nesta sexta-feira.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método já foi chamado nesta segunda-feira.");
         }
 
         scraperService.scrape();
@@ -62,10 +73,33 @@ public class SpotifyController {
         return ResponseEntity.ok("Operação realizada com sucesso.");
     }
 
+    @PostMapping(value = "/saveYoutube")
+    public ResponseEntity<String> saveYoutubeCharts (){
+        LocalDate today = LocalDate.now();
+        if (today.getDayOfWeek() != DayOfWeek.WEDNESDAY) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às Quartas-Feiras.");
+        }
+
+        if (saveTopChartsCalledYoutube) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método já foi chamado nesta Quarta-Feira.");
+        }
+
+        scraperService.scrapeYoutubeCharts();
+        List<ScraperService.ScrappingResult> scrappingResults = scraperService.getScrappingResultsYoutubeCharts();
+        List<String> musicNames = scrappingResults.stream().map(ScraperService.ScrappingResult::getMusicName).collect(Collectors.toList());
+        spotifyService.saveTopChartsYoutube(musicNames);
+
+        saveTopChartsCalledYoutube = true;
+
+        return ResponseEntity.ok("Operação realizada com sucesso.");
+    }
+
     @GetMapping
     public Genres getAllGenres() {
         return spotifyService.getAllGenres();
     }
+
+
 
     @GetMapping(value = "/descobrir/{generoPrimario}/{generoSecundario}")
     public TrackData spotifyDescobrirMusica(@PathVariable String generoPrimario, @PathVariable String generoSecundario){

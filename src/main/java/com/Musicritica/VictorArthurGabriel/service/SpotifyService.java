@@ -1,11 +1,13 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
+import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsRepository;
+import com.Musicritica.VictorArthurGabriel.repository.TopChartsYoutubeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,18 @@ public class SpotifyService {
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-    private String accessToken = "BQDW224KLDD5IPi8mfZo1a7GI9i2fZXUtgMcWid1tQ6YDOZP88zzgRm508vNCC36soASy1A8a8zzgIPwZAbxJW-MeEMV85zD2KcmanO9LgDeP5SN8T4";    HttpHeaders headers = new HttpHeaders();
+    private String accessToken = "BQBBLQ3QmtOyLrHgh3C7uEVU5tc7ctXqtwxb8WnGxYzFCb3mH_Nma2QJHjNZlcjNPzmzE78MUvOlXhyXksKlVMP3Cn3aK8BOc7o9-cTfcVGmqYUPh78";
+
+    HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Autowired
     private TopChartsRepository repository;
+
+    @Autowired
+    private TopChartsYoutubeRepository topChartsYoutubeRepository;
 
     public SpotifySearchResponse searchTracksWithNoLimit(String query) {
         String url = String.format(SPOTIFY_API_URL, query);
@@ -121,6 +128,25 @@ public class SpotifyService {
         }
     }
 
+    public void saveTopChartsYoutube (List<String> musicNames) {
+        for (String nomeDaMusica : musicNames) {
+            TopChartsYoutube topCharts = new TopChartsYoutube();
+            topCharts.setNome_musica(nomeDaMusica);
+            topChartsYoutubeRepository.save(topCharts);
+        }
+    }
+
+    public List<TopChartsYoutube> getTopChartsYoutube  (){
+        List<TopChartsYoutube> nomeMusicas = new ArrayList<>();
+        List<TopChartsYoutube> topChartsList = topChartsYoutubeRepository.getTopChartYoutubeList();
+
+        for (TopChartsYoutube topChart : topChartsList) {
+            TopChartsYoutube topCharts = new TopChartsYoutube();
+            topCharts.setNome_musica(topChart.getNome_musica());
+            nomeMusicas.add(topCharts);
+        }
+        return nomeMusicas;
+    }
     public List<TopCharts> getTopCharts (){
         List<TopCharts> nomeMusicas = new ArrayList<>();
         List<TopCharts> topChartsList = repository.getTopChartList();
@@ -132,6 +158,7 @@ public class SpotifyService {
         }
         return nomeMusicas;
     }
+
 
 
     // refatorar com for each loop
@@ -146,3 +173,5 @@ public class SpotifyService {
         return searchResponses;
     }
 }
+
+//sonarqube
