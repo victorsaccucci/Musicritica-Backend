@@ -120,6 +120,9 @@ public class UsuarioService implements UserDetailsService{
         return true;
     }
 
+    public int econtrarUsuarioPorEmail(String email){
+        return repository.encontarUsuarioPeloEmail(email);
+    }
     private void validarCamposObrigatorios(RegistroDTO registroDTO) throws MusicriticaException{
         String mensagemValidacao = "";
         mensagemValidacao += validarCampoString(registroDTO.email(), "email");

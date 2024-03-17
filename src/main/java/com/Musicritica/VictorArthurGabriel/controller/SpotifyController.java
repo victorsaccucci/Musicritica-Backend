@@ -11,13 +11,11 @@ import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +53,7 @@ public class SpotifyController {
     @PostMapping
     public ResponseEntity<String> saveTopCharts (){
         LocalDate today = LocalDate.now();
-        if (today.getDayOfWeek() != DayOfWeek.WEDNESDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.THURSDAY) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às segundas-feiras.");
         }
 
@@ -76,7 +74,7 @@ public class SpotifyController {
     @PostMapping(value = "/saveYoutube")
     public ResponseEntity<String> saveYoutubeCharts (){
         LocalDate today = LocalDate.now();
-        if (today.getDayOfWeek() != DayOfWeek.WEDNESDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.THURSDAY) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às Quartas-Feiras.");
         }
 

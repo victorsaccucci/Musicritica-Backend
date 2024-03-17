@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class SpotifyService {
@@ -26,7 +24,7 @@ public class SpotifyService {
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-    private String accessToken = "BQBBLQ3QmtOyLrHgh3C7uEVU5tc7ctXqtwxb8WnGxYzFCb3mH_Nma2QJHjNZlcjNPzmzE78MUvOlXhyXksKlVMP3Cn3aK8BOc7o9-cTfcVGmqYUPh78";
+    private String accessToken = "BQBhNWMIAr3FdIQPXRypsUA2gresR41NBPCZ0cHkgGKt84jQY4JWni1Y5kwgksjVdI9Vq4x9qWxKjq7mLTZk39XOTsHCygwacP__vnR_WIYLzmI467o";
 
     HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
@@ -158,8 +156,6 @@ public class SpotifyService {
         }
         return nomeMusicas;
     }
-
-
 
     // refatorar com for each loop
     public List<SpotifySearchResponse> searchTracks(List<String> musicNames) {

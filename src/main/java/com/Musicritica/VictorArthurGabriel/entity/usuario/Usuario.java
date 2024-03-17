@@ -33,6 +33,7 @@ public class Usuario implements UserDetails {
     private String imagem_background;
     private String dt_cadastro;
     private CargoUsuario role;
+
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private PasswordResetToken passwordResetToken;
 

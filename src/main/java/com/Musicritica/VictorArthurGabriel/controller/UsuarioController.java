@@ -34,7 +34,9 @@ public class UsuarioController {
     }
 
     @GetMapping(value = "/{id}")
-    public Usuario buscarPeloId(@PathVariable Long id) { return service.buscarId(id); }
+    public Usuario buscarPeloId(@PathVariable Long id) {
+        return service.buscarId(id);
+    }
 
     @GetMapping
     public List<Usuario> listarTodos(){
@@ -42,6 +44,10 @@ public class UsuarioController {
         return usuarios;
     }
 
+    @GetMapping(value = "/buscar/{email}")
+    public int encontrarUsuarioPorEmail(@PathVariable String email){
+        return service.econtrarUsuarioPorEmail(email);
+    }
 
     @DeleteMapping("/{id}")
     public boolean excluir(@PathVariable Long id){
