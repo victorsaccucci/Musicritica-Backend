@@ -1,4 +1,4 @@
-package com.Musicritica.VictorArthurGabriel.entity.usuario;
+package com.Musicritica.VictorArthurGabriel.entity.usuario.DTO;
 
 import org.springframework.web.multipart.MultipartFile;
 
