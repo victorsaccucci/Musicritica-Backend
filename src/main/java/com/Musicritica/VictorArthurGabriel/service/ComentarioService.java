@@ -25,5 +25,8 @@ public class ComentarioService {
         List<Comentario> respostas = repository.listarRespostas(id);
         return respostas;
     }
+    public int quantidadeComentariosPorIdMusica(String id){
+        return repository.quantidadeComentarios(id);
+    }
 }
 
