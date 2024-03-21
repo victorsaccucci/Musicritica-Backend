@@ -32,7 +32,8 @@ public class Usuario implements UserDetails {
     @Column(name = "imagem_perfil", columnDefinition = "LONGBLOB")
     private byte[] imagem_perfil;
     @Lob
-    private String imagem_background;
+    @Column(name = "imagem_background", columnDefinition = "LONGBLOB")
+    private byte[] imagem_background;
     private String dt_cadastro;
     private CargoUsuario role;
 

@@ -1,31 +1,28 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.RegistroDTO;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.UsuarioDTO;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.UsuarioUpdateDTO;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.*;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.RegistroDTO;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioDTO;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,75 +31,52 @@ public class UsuarioService implements UserDetailsService{
 
     @Autowired
     private UsuarioRepository repository;
-
     @Autowired
     JavaMailSender javaMailSender;
-
     @Autowired
     PasswordTokenRepository tokenRepository;
-
     @Autowired
     TokenService tokenService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email);
     }
 
-    public String sendEmail(Usuario user) {
+    public void registrar(@Valid RegistroDTO data) throws MusicriticaException {
+        validarRegistro(data);
+        String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dataFormatada = LocalDateTime.now().format(formatter);
+        CargoUsuario cargo = CargoUsuario.USER;
+        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada);
+
+        repository.save(novoUsuario);
+    }
+
+    public boolean sendEmail(Usuario user) {
         try {
             String resetLink = generateResetToken(user);
 
             SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setFrom("sauer.arthur@gmail.com");
+            msg.setFrom("musicritica01@gmail.com");
             msg.setTo(user.getEmail());
 
             msg.setSubject("Musicrítica - Recuperação de Senha");
             msg.setText("Olá! \n\n" + "Por favor, clique no link para redefinir sua senha:" + resetLink + ". \n\n"
-                    + "Atenciosamente \n" + "Musicrítica");
+                    + "Atenciosamente \n" + "Musicritica");
 
             javaMailSender.send(msg);
 
-            return "success";
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return false;
         }
 
     }
-
-    public String generateResetToken(Usuario user) {
-        UUID uuid = UUID.randomUUID();
-        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-        LocalDateTime expiryDateTime = currentDateTime.plusMinutes(30);
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setUsuario(user);
-        resetToken.setToken(uuid.toString());
-        resetToken.setExpiryDateTime(expiryDateTime);
-        resetToken.setUsuario(user);
-        PasswordResetToken token = tokenRepository.save(resetToken);
-        if (token != null) {
-            String endpointUrl = "http://localhost:8080/auth/redefinirSenha";
-            return endpointUrl + "/" + resetToken.getToken();
-        }
-        return "";
-    }
-
-    public void markTokenAsExpired(PasswordResetToken token) {
-        token.setExpiryDateTime(LocalDateTime.now().minusDays(1));
-        tokenRepository.save(token);
-        //hasExpired(token);
-    }
-
-//    public boolean hasExpired(PasswordResetToken token) {
-//        LocalDateTime expiryDateTime = token.getExpiryDateTime();
-//        LocalDateTime currentDateTime = LocalDateTime.now();
-//        boolean hasExpired = currentDateTime.isAfter(expiryDateTime);
-//        if (hasExpired) {
-//            tokenRepository.delete(token);
-//        }
-//        return hasExpired;
-//    }
 
     public void atualizar(UserDetails userDetails, UsuarioDTO usuarioDTO){
         String email = userDetails.getUsername();
@@ -111,6 +85,7 @@ public class UsuarioService implements UserDetailsService{
 
         usuario.setNome(usuarioDTO.getNome());
         usuario.setImagem_perfil(usuario.getImagem_perfil());
+        usuario.setImagem_background(usuario.getImagem_background());
 
         repository.save(usuario);
     }
@@ -154,4 +129,66 @@ public class UsuarioService implements UserDetailsService{
 
     public Usuario buscarId(Long id){ return repository.buscarPeloId(id);}
 
+    public String forgotPassword(@Valid UsuarioDTO data) throws MusicriticaException{
+        Usuario usuario = (Usuario) repository.findByEmail(data.getEmail());
+
+        if(usuario != null){
+            boolean enviado = sendEmail(usuario);
+            if (enviado){
+                return "Email de recuperação de senha enviado com sucesso.";
+            }else{
+                throw new MusicriticaException("Falha ao enviar o email de recuperação de senha.");
+            }
+        }else{
+            throw new MusicriticaException("Usuário com email: " +data.getEmail() +"não foi encontrado.");
+        }
+    }
+
+    public String resetPassword(String token, UsuarioDTO data) throws MusicriticaException {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token);
+
+        if (resetToken == null || resetToken.getExpiryDateTime().isBefore(LocalDateTime.now())) {
+            throw new MusicriticaException("Token inválido ou expirado.");
+        }
+
+        Usuario usuario = resetToken.getUsuario();
+        usuario.setSenha(passwordEncoder.encode(data.getSenha()));
+        repository.save(usuario);
+
+        markTokenAsExpired(resetToken);
+        return "Senha redefinida com sucesso.";
+    }
+
+    public String generateResetToken(Usuario user) {
+        UUID uuid = UUID.randomUUID();
+        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+        LocalDateTime expiryDateTime = currentDateTime.plusMinutes(30);
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setUsuario(user);
+        resetToken.setToken(uuid.toString());
+        resetToken.setExpiryDateTime(expiryDateTime);
+        resetToken.setUsuario(user);
+        PasswordResetToken token = tokenRepository.save(resetToken);
+        if (token != null) {
+            String endpointUrl = "http://localhost:8080/usuario/redefinir-senha";
+            return endpointUrl + "/" + resetToken.getToken();
+        }
+        return "";
+    }
+
+    public void markTokenAsExpired(PasswordResetToken token) {
+        token.setExpiryDateTime(LocalDateTime.now().minusDays(1));
+        tokenRepository.save(token);
+        //hasExpired(token);
+    }
+
+//    public boolean hasExpired(PasswordResetToken token) {
+//        LocalDateTime expiryDateTime = token.getExpiryDateTime();
+//        LocalDateTime currentDateTime = LocalDateTime.now();
+//        boolean hasExpired = currentDateTime.isAfter(expiryDateTime);
+//        if (hasExpired) {
+//            tokenRepository.delete(token);
+//        }
+//        return hasExpired;
+//    }
 }

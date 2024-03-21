@@ -1,4 +1,4 @@
-package com.Musicritica.VictorArthurGabriel.entity.usuario;
+package com.Musicritica.VictorArthurGabriel.entity.usuario.DTO;
 
 import lombok.Data;
 import lombok.Getter;
