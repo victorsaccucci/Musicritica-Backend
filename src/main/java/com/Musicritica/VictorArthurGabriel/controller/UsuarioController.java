@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -45,7 +46,7 @@ public class UsuarioController {
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException {
         service.registrar(data);
-        return ResponseEntity.ok("Usuário cadastrado com sucesso.");
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
     }
 
     @PutMapping("/atualizar")
@@ -57,7 +58,7 @@ public class UsuarioController {
         return ResponseEntity.ok("Informações do usuário atualizadas com sucesso.");
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public Usuario buscarPeloId(@PathVariable Long id) {
         return service.buscarId(id);
     }

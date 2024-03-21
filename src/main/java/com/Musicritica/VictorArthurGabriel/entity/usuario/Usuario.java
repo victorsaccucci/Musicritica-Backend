@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.entity.usuario;
 
 import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,7 @@ public class Usuario implements UserDetails {
 
     private String nome;
     private String email;
+    @JsonIgnore
     private String senha;
     @Lob
     @Column(name = "imagem_perfil", columnDefinition = "LONGBLOB")
@@ -51,6 +53,7 @@ public class Usuario implements UserDetails {
         if(this.role == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
+    @JsonIgnore
     @Override
     public String getPassword() {
         return senha;
