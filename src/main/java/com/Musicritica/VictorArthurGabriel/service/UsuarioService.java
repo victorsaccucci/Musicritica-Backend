@@ -19,6 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -45,15 +53,37 @@ public class UsuarioService implements UserDetailsService{
         return repository.findByEmail(email);
     }
 
-    public void registrar(@Valid RegistroDTO data) throws MusicriticaException {
+    public void registrar(@Valid RegistroDTO data) throws MusicriticaException, IOException {
         validarRegistro(data);
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String dataFormatada = LocalDateTime.now().format(formatter);
         CargoUsuario cargo = CargoUsuario.USER;
-        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada);
+        byte[] imagem_perfil = loadPlaceholderImage();
+
+        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, imagem_perfil);
 
         repository.save(novoUsuario);
+    }
+
+    private byte[] loadPlaceholderImage() throws IOException {
+        // URL da imagem de placeholder remota (HTTPS)
+        URL placeholderImageUrl = new URL("https://i.imgur.com/wFPwHFd.png");
+
+        // Abrir conexão com o URL
+        URLConnection connection = placeholderImageUrl.openConnection();
+
+        // Ler os bytes da imagem
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
     }
 
     public boolean sendEmail(Usuario user) {
@@ -170,7 +200,7 @@ public class UsuarioService implements UserDetailsService{
         resetToken.setUsuario(user);
         PasswordResetToken token = tokenRepository.save(resetToken);
         if (token != null) {
-            String endpointUrl = "http://localhost:8080/usuario/redefinir-senha";
+            String endpointUrl = "http://localhost:4200/usuario/redefinir-senha";
             return endpointUrl + "/" + resetToken.getToken();
         }
         return "";
