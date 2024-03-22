@@ -38,21 +38,25 @@ public class Usuario implements UserDetails {
     private CargoUsuario role;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore // Evita a recursão infinita ao serializar
     private PasswordResetToken passwordResetToken;
 
-    public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro){
+    public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro, byte[] imagem_perfil){
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
         this.dt_cadastro = dt_cadastro;
+        this.imagem_perfil = imagem_perfil;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
+    @JsonIgnore
     @Override
     @JsonIgnore
     public String getPassword() {

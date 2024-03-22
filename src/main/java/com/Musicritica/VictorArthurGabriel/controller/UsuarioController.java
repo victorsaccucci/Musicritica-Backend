@@ -18,6 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -43,9 +46,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException {
+    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException, IOException {
         service.registrar(data);
-        return ResponseEntity.ok("Usuário cadastrado com sucesso.");
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
     }
 
     @PutMapping("/atualizar")
@@ -57,7 +60,7 @@ public class UsuarioController {
         return ResponseEntity.ok("Informações do usuário atualizadas com sucesso.");
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public Usuario buscarPeloId(@PathVariable Long id) {
         return service.buscarId(id);
     }
@@ -85,9 +88,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/redefinirSenha/{token}")
-    public ResponseEntity<String> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
-        String response = service.resetPassword(token, usuarioDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
+        service.resetPassword(token, usuarioDTO);
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
     }
 
 }
