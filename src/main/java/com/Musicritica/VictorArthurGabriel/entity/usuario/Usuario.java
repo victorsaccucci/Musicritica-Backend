@@ -37,7 +37,7 @@ public class Usuario implements UserDetails {
     private String dt_cadastro;
     private CargoUsuario role;
 
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
     @JsonIgnore // Evita a recursão infinita ao serializar
     private PasswordResetToken passwordResetToken;
 
