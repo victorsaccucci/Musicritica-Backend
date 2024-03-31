@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.entity;
 
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
