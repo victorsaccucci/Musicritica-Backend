@@ -10,6 +10,8 @@ import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,6 +50,8 @@ public class UsuarioService implements UserDetailsService{
     TokenService tokenService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    ResourceLoader resourceLoader;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -59,31 +64,19 @@ public class UsuarioService implements UserDetailsService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String dataFormatada = LocalDateTime.now().format(formatter);
         CargoUsuario cargo = CargoUsuario.USER;
-        byte[] imagem_perfil = loadPlaceholderImage();
+
+        Resource resource = resourceLoader.getResource("classpath:img/avatar_placeholder.png");
+        byte[] imagem_perfil = null;
+        try (InputStream inputStream = resource.getInputStream()) {
+            imagem_perfil = FileCopyUtils.copyToByteArray(inputStream);
+        } catch (IOException e) {
+            // Lidar com a exceção apropriadamente
+            e.printStackTrace();
+        }
 
         Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, imagem_perfil);
 
         repository.save(novoUsuario);
-    }
-
-    private byte[] loadPlaceholderImage() throws IOException {
-        // URL da imagem de placeholder remota (HTTPS)
-        URL placeholderImageUrl = new URL("https://i.imgur.com/wFPwHFd.png");
-
-        // Abrir conexão com o URL
-        URLConnection connection = placeholderImageUrl.openConnection();
-
-        // Ler os bytes da imagem
-        try (InputStream inputStream = connection.getInputStream();
-             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            return outputStream.toByteArray();
-        }
     }
 
     public boolean sendEmail(Usuario user) {
@@ -209,16 +202,16 @@ public class UsuarioService implements UserDetailsService{
     public void markTokenAsExpired(PasswordResetToken token) {
         token.setExpiryDateTime(LocalDateTime.now().minusDays(1));
         tokenRepository.save(token);
-        //hasExpired(token);
+        hasExpired(token);
     }
 
-//    public boolean hasExpired(PasswordResetToken token) {
-//        LocalDateTime expiryDateTime = token.getExpiryDateTime();
-//        LocalDateTime currentDateTime = LocalDateTime.now();
-//        boolean hasExpired = currentDateTime.isAfter(expiryDateTime);
-//        if (hasExpired) {
-//            tokenRepository.delete(token);
-//        }
-//        return hasExpired;
-//    }
+    public boolean hasExpired(PasswordResetToken token) {
+        LocalDateTime expiryDateTime = token.getExpiryDateTime();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        boolean hasExpired = currentDateTime.isAfter(expiryDateTime);
+        if (hasExpired) {
+            tokenRepository.delete(token);
+        }
+        return hasExpired;
+    }
 }
