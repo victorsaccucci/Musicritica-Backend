@@ -90,7 +90,7 @@ public class UsuarioController {
     @PostMapping("/redefinirSenha/{token}")
     public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
         service.resetPassword(token, usuarioDTO);
-        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Senha alterada com sucesso."));
     }
 
 }
