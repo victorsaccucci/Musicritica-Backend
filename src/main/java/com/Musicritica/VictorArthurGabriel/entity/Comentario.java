@@ -22,9 +22,9 @@ public class    Comentario {
 
     private Instant dt_publicacao;
 
-    @ManyToOne
-    @JoinColumn(name = "id_musica")
-    private Musica musica;
+//    @ManyToOne
+//    @JoinColumn(name = "id_musica")
+//    private Musica musica;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")

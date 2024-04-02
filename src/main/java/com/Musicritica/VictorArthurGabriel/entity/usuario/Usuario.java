@@ -38,7 +38,7 @@ public class Usuario implements UserDetails {
     private CargoUsuario role;
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
-    @JsonIgnore // Evita a recursão infinita ao serializar
+    @JsonIgnore
     private PasswordResetToken passwordResetToken;
 
     public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro, byte[] imagem_perfil){
@@ -56,8 +56,9 @@ public class Usuario implements UserDetails {
         if(this.role == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
-    @JsonIgnore
+
     @Override
+    @JsonIgnore
     public String getPassword() {
         return senha;
     }

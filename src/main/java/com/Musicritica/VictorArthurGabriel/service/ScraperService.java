@@ -26,11 +26,11 @@ public class ScraperService {
 
     List<ScrappingResult> scrappingResultsYoutubeCharts = new ArrayList<>();
 
-    @PostConstruct
-    void postConstruct() {
-        scrape();
-        scrapeYoutubeCharts();
-    }
+//    @PostConstruct
+//    void postConstruct() {
+//        scrape();
+//        scrapeYoutubeCharts();
+//    }
 
     public List<ScrappingResult> scrapeYoutubeCharts() {
         driver.get(urlYoutubeCharts);

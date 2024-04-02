@@ -34,4 +34,9 @@ public class ComentarioController {
         List<Comentario> respostas =  service.listarRespostas(id);
         return respostas;
     }
+
+    @GetMapping(value = "/comentarios/{id}")
+    public int quantidadeComentariosPorIdMusica(@PathVariable String id){
+        return service.quantidadeComentariosPorIdMusica(id);
+    }
 }
