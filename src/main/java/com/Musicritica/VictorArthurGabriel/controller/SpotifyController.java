@@ -53,7 +53,7 @@ public class SpotifyController {
     @PostMapping
     public ResponseEntity<String> saveTopCharts (){
         LocalDate today = LocalDate.now();
-        if (today.getDayOfWeek() != DayOfWeek.SATURDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.SUNDAY) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às segundas-feiras.");
         }
 
@@ -74,7 +74,7 @@ public class SpotifyController {
     @PostMapping(value = "/saveYoutube")
     public ResponseEntity<String> saveYoutubeCharts (){
         LocalDate today = LocalDate.now();
-        if (today.getDayOfWeek() != DayOfWeek.SATURDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.SUNDAY) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às Quartas-Feiras.");
         }
 
@@ -96,8 +96,6 @@ public class SpotifyController {
     public Genres getAllGenres() {
         return spotifyService.getAllGenres();
     }
-
-
 
     @GetMapping(value = "/descobrir/{generoPrimario}/{generoSecundario}")
     public TrackData spotifyDescobrirMusica(@PathVariable String generoPrimario, @PathVariable String generoSecundario){

@@ -4,6 +4,7 @@ import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.repository.PlaylistRepository;
 import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,13 @@ public class PlaylistService {
         }
         playlist.setMusicaSpotifyList(musicasPersistidas);
         return playlistRepository.save(playlist);
+    }
+
+
+    @Transactional
+    public void verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) {
+        playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
+        playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
     }
 
     public Playlist buscarPorId(Long id) {

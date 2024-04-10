@@ -1,12 +1,15 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
+import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.service.PlaylistService;
+import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/playlist")
@@ -14,18 +17,38 @@ import java.util.List;
 public class PlaylistController {
 
     @Autowired
-    private PlaylistService service;
+    private PlaylistService playlistService;
+
+    @Autowired
+    private SpotifyService spotifyService;
 
     @PostMapping()
     public Playlist salvar (@RequestBody  Playlist playlist){
-        return service.salvar(playlist);
+        return playlistService.salvar(playlist);
     }
+
     @GetMapping(value = "/{id}")
     public Playlist buscarPorId (@PathVariable Long id){
-        return service.buscarPorId(id);
+        return playlistService.buscarPorId(id);
     }
+
     @GetMapping(value = "/todas/{id}")
     public List<Playlist> buscarPorIdUsuario (@PathVariable Long id){
-        return service.buscarPorIdUsuario(id);
+        return playlistService.buscarPorIdUsuario(id);
+    }
+
+    @PostMapping("/verificar")
+    public void verificarEInserirMusicaSpotify(@RequestParam String idSpotify, @RequestParam String idMusicaSpotify, @RequestParam Long idPlaylist) {
+        playlistService.verificarEInserirMusicaSpotify(idSpotify, idMusicaSpotify, idPlaylist);
+    }
+
+    @GetMapping(value = "/{id}/tracks")
+    public ListaTracksSpotify getPlaylistTracks(@PathVariable Long id) {
+        Playlist playlist = playlistService.buscarPorId(id);
+        List<String> trackIds = playlist.getMusicaSpotifyList().stream()
+                .map(MusicaSpotify::getId_spotify)
+                .collect(Collectors.toList());
+
+        return spotifyService.buscarMusicasPorIds(trackIds);
     }
 }

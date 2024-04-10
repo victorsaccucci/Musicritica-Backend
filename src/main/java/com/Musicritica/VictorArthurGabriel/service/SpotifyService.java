@@ -5,6 +5,7 @@ import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsRepository;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsYoutubeRepository;
@@ -20,11 +21,12 @@ public class SpotifyService {
 
     private final String SPOTIFY_API_URL_WITH_LIMIT = "https://api.spotify.com/v1/search?q=%s&type=track&limit=1";
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
+    private final String SPOTIFY_API_URL_GET_TRACKS = "https://api.spotify.com/v1/tracks?ids=%s";
     private final String SPOTIFY_GENRES_URL = "https://api.spotify.com/v1/recommendations/available-genre-seeds";
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-    private String accessToken = "BQB5Y8rKr80TZo6EtHnmhxUDZrqDzPivNVSIWe0Xvx0zFTsYG_KBGHtuRoX_lRk3nRtBmEzLsAtm0RqYAun0tfVDpULkThlm-RiLvag5IW5ItbyYeA0";
+    private String accessToken = "BQBqk29qMgEBIapgyaV-OuDUvHHEBkADB_i8NM5lItdmoE9R5TgkMe6bd1PF3IGZ8Foj9p2LFr-dNGxyg5zsk7_XN8yroeD7joHYd-T8jSEksGYo-BE";
 
     HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
@@ -65,6 +67,24 @@ public class SpotifyService {
                 HttpMethod.GET,
                 entity,
                 SpotifySearchResponse.class
+        );
+
+        return response.getBody();
+    }
+
+    public ListaTracksSpotify buscarMusicasPorIds(List<String> ids) {
+        String joinedIds = String.join(",", ids);
+        String url = String.format(SPOTIFY_API_URL_GET_TRACKS, joinedIds);
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<ListaTracksSpotify> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                ListaTracksSpotify.class
         );
 
         return response.getBody();
@@ -157,10 +177,8 @@ public class SpotifyService {
         return nomeMusicas;
     }
 
-    // refatorar com for each loop
     public List<SpotifySearchResponse> searchTracks(List<String> musicNames) {
         List<SpotifySearchResponse> searchResponses = new ArrayList<>();
-
         for (int i = 0; i < musicNames.size(); i++) {
             String musicName = musicNames.get(i);
             SpotifySearchResponse response = searchTrack(musicName);
@@ -170,4 +188,3 @@ public class SpotifyService {
     }
 }
 
-//sonarqube
