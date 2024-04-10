@@ -87,10 +87,14 @@ public class UsuarioController {
        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/redefinirSenha/{token}")
-    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
-        service.resetPassword(token, usuarioDTO);
-        return ResponseEntity.ok( "Usuário cadastrado com sucesso.");
-    }
+//    @PostMapping("/redefinirSenha/{token}")
+//    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
+//        service.resetPassword(token, usuarioDTO);
+//
+//        return ResponseEntity.ok( "Usuário cadastrado com sucesso.");
+//
+//        return ResponseEntity.ok().body(Collections.singletonMap("message", "Senha alterada com sucesso."));
+//
+//    }
 
 }
