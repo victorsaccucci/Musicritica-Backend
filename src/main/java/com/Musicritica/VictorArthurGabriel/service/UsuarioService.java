@@ -173,7 +173,7 @@ public class UsuarioService implements UserDetailsService{
 
     }
 
-    public String resetPassword(String token, UsuarioDTO data) throws MusicriticaException {
+    public void resetPassword(String token, UsuarioDTO data) throws MusicriticaException {
         PasswordResetToken resetToken = tokenRepository.findByToken(token);
 
         if (resetToken == null || resetToken.getExpiryDateTime().isBefore(LocalDateTime.now())) {
@@ -185,23 +185,20 @@ public class UsuarioService implements UserDetailsService{
         repository.save(usuario);
 
         markTokenAsExpired(resetToken);
-        return "Senha redefinida com sucesso.";
     }
 
     public String generateResetToken(Usuario user) {
         LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-        LocalDateTime expiryDateTime = currentDateTime.plusMinutes(1);
+        LocalDateTime expiryDateTime = currentDateTime.plusMinutes(30);
 
         PasswordResetToken existingToken = tokenRepository.findByUsuario(user);
 
         if (existingToken != null) {
-            // Atualiza o token existente
             existingToken.setToken(UUID.randomUUID().toString());
             existingToken.setExpiryDateTime(expiryDateTime);
             tokenRepository.save(existingToken);
             return "http://localhost:4200/usuario/redefinir-senha/" + existingToken.getToken();
         } else {
-            // Cria um novo token
             UUID uuid = UUID.randomUUID();
             PasswordResetToken newToken = new PasswordResetToken();
             newToken.setUsuario(user);

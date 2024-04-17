@@ -48,7 +48,7 @@ public class UsuarioController {
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException, IOException {
         service.registrar(data);
-        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
+        return ResponseEntity.ok("Usuário cadastrado com sucesso.");
     }
 
     @PutMapping("/atualizar")
@@ -87,14 +87,10 @@ public class UsuarioController {
        return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/redefinirSenha/{token}")
-//    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
-//        service.resetPassword(token, usuarioDTO);
-//
-//        return ResponseEntity.ok( "Usuário cadastrado com sucesso.");
-//
-//        return ResponseEntity.ok().body(Collections.singletonMap("message", "Senha alterada com sucesso."));
-//
-//    }
+    @PostMapping("/redefinirSenha/{token}")
+    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
+        service.resetPassword(token, usuarioDTO);
+        return ResponseEntity.ok("Senha redefinida com sucesso.");
+    }
 
 }
