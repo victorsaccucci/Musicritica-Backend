@@ -9,12 +9,19 @@ import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsRepository;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsYoutubeRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SpotifyService {
@@ -26,11 +33,53 @@ public class SpotifyService {
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
     private final RestTemplate restTemplate;
-    private String accessToken = "BQBqk29qMgEBIapgyaV-OuDUvHHEBkADB_i8NM5lItdmoE9R5TgkMe6bd1PF3IGZ8Foj9p2LFr-dNGxyg5zsk7_XN8yroeD7joHYd-T8jSEksGYo-BE";
 
+
+    private String clientId = "a24ecaa70b0f4260a128e1d4fd9bf16a";
+
+
+    private String clientSecret = "a9e53beb4fbf4cb6948f5e8a4fb648e4";
+
+    private String accessToken;
+
+    private final String SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
     HttpHeaders headers = new HttpHeaders();
     public SpotifyService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+        this.accessToken = fetchAccessToken();
+    }
+    @Scheduled(fixedRate = 59 * 60 * 1000)
+    public void refreshAccessToken() {
+        this.accessToken = fetchAccessToken();
+    }
+
+    @PostConstruct
+    public void init() {
+        this.accessToken = fetchAccessToken();
+        System.out.println("Token de acesso atualizado: " + this.accessToken);
+    }
+
+    private String fetchAccessToken() {
+        String credentials = clientId + ":" + clientSecret;
+        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Basic " + encodedCredentials);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(SPOTIFY_TOKEN_URL, request, Map.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Map<String, Object> responseBody = response.getBody();
+            return (String) responseBody.get("access_token");
+        } else {
+            throw new RuntimeException("Failed to fetch access token from Spotify API");
+        }
     }
 
     @Autowired

@@ -19,7 +19,7 @@ public class Avaliacao {
 
     @ManyToOne
     @JoinColumn(name = "id_musica")
-    private Musica musica;
+    private MusicaSpotify musica;
 
-    private int nota;
+    private double nota;
 }
