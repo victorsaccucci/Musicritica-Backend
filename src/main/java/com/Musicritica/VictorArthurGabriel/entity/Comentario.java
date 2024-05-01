@@ -10,15 +10,13 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "comentario")
-public class    Comentario {
+public class Comentario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String idSpotify;
-
     private String comentario;
+    private String idSpotify;
 
     private Instant dt_publicacao;
 
