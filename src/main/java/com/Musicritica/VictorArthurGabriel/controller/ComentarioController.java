@@ -3,6 +3,7 @@ package com.Musicritica.VictorArthurGabriel.controller;
 import com.Musicritica.VictorArthurGabriel.entity.Comentario;
 import com.Musicritica.VictorArthurGabriel.service.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -38,5 +39,9 @@ public class ComentarioController {
     @GetMapping(value = "/comentarios/{id}")
     public int quantidadeComentariosPorIdMusica(@PathVariable String id){
         return service.quantidadeComentariosPorIdMusica(id);
+    }
+    @DeleteMapping(value = "/{usuarioId}/{comentarioId}")
+    public ResponseEntity<String> deletarComentario(@PathVariable Long usuarioId, @PathVariable Long comentarioId){
+        return service.deletarComentario(usuarioId, comentarioId);
     }
 }

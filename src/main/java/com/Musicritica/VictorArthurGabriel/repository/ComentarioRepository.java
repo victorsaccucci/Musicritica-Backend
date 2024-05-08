@@ -24,4 +24,7 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
 
     @Query(value = "SELECT COUNT(*) AS quantidade_comentarios FROM comentario WHERE id_spotify = ?", nativeQuery = true)
     public int quantidadeComentarios(String id);
+
+    @Query(value = "SELECT * FROM comentario WHERE id = ?", nativeQuery = true)
+    public Comentario encontarComentario(Long id);
 }
