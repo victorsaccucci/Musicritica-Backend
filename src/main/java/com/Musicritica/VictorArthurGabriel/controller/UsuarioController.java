@@ -1,15 +1,13 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
 import com.Musicritica.VictorArthurGabriel.entity.usuario.*;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.AuthenticationDTO;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.LoginResponseDTO;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.RegistroDTO;
-import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioDTO;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.*;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.service.TokenService;
 import com.Musicritica.VictorArthurGabriel.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -46,18 +45,25 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException, IOException {
+    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException {
         service.registrar(data);
         return ResponseEntity.ok("Usuário cadastrado com sucesso.");
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity<?> updateUserDetails(Authentication authentication, @RequestBody UsuarioDTO userUpdateDTO) {
+    public ResponseEntity<?> updateUserDetails(Authentication authentication,
+                                               @RequestPart ("nome") String nome,
+                                               @RequestPart ("imagem_perfil") MultipartFile imagem_perfil) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        service.atualizar(userDetails, userUpdateDTO);
+        UsuarioUpdateDTO usuarioParaAtualizar = new UsuarioUpdateDTO(nome, imagem_perfil);
 
-        return ResponseEntity.ok("Informações do usuário atualizadas com sucesso.");
+        try {
+            service.atualizar(userDetails, usuarioParaAtualizar);
+            return ResponseEntity.ok("Informações do usuário atualizadas com sucesso.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a imagem de perfil.");
+        }
     }
 
     @GetMapping("/{id}")

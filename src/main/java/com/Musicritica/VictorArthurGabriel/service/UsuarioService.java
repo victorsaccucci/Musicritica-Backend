@@ -4,6 +4,7 @@ import com.Musicritica.VictorArthurGabriel.entity.PasswordResetToken;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.*;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioDTO;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioUpdateDTO;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
@@ -22,14 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -58,7 +53,7 @@ public class UsuarioService implements UserDetailsService{
         return repository.findByEmail(email);
     }
 
-    public void registrar(@Valid RegistroDTO data) throws MusicriticaException, IOException {
+    public void registrar(@Valid RegistroDTO data) throws MusicriticaException {
         validarRegistro(data);
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -79,22 +74,29 @@ public class UsuarioService implements UserDetailsService{
         repository.save(novoUsuario);
     }
 
-
-
-    public void atualizar(UserDetails userDetails, UsuarioDTO usuarioDTO){
+    public void atualizar(UserDetails userDetails, UsuarioUpdateDTO usuarioUpdateDTO) throws IOException {
         String email = userDetails.getUsername();
 
         Usuario usuario = (Usuario) repository.findByEmail(email);
 
-        usuario.setNome(usuarioDTO.getNome());
-        usuario.setImagem_perfil(usuario.getImagem_perfil());
-        usuario.setImagem_background(usuario.getImagem_background());
+        if (usuarioUpdateDTO.nome() != null && !usuarioUpdateDTO.nome().isEmpty()) {
+            usuario.setNome(usuarioUpdateDTO.nome());
+        }
+
+        if (usuarioUpdateDTO.imagem_perfil() != null && !usuarioUpdateDTO.imagem_perfil().isEmpty()) {
+            usuario.setImagem_perfil(usuarioUpdateDTO.imagem_perfil().getBytes());
+        }
+
+        //TODO IMPLEMENTAR A ATUALIZAÇÃO DA IMAGEM_BACKGROUND
+/*        if (usuarioUpdateDTO.imagem_background() != null) {
+            usuario.setImagem_background(usuarioUpdateDTO.imagem_background());
+        }*/
 
         repository.save(usuario);
     }
 
     public boolean excluir(Long id){
-        repository.deleteById(id.longValue());
+        repository.deleteById(id);
         return true;
     }
 
@@ -122,7 +124,7 @@ public class UsuarioService implements UserDetailsService{
 
     private String validarCampoString(String valorCampo, String nomeCampo) {
         if (valorCampo == null || valorCampo.trim().isEmpty()){
-            return "Informe o " +nomeCampo + "\n";
+            return "Preencha o campo: " +nomeCampo + "\n";
         }
         return "";
     }
@@ -148,9 +150,6 @@ public class UsuarioService implements UserDetailsService{
         }
     }
 
-    //TODO - REALIZAR VALIDAÇÃO CASO UM RESETTOKEN JA EXISTA
-    //TODO - CASO UM TOKEN JA EXISTA AO EMAIL ASSOCIADO, REALIZAR UM UPDATE NESSE TOKEN PASSANDO O NOVO
-    //TODO -
     public boolean sendEmail(Usuario user) throws MusicriticaException {
         try {
             String resetLink = generateResetToken(user);
