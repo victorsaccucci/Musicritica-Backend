@@ -45,9 +45,13 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) throws MusicriticaException {
-        service.registrar(data);
-        return ResponseEntity.ok("Usuário cadastrado com sucesso.");
+    public ResponseEntity<?> registrar(@RequestBody RegistroDTO data) {
+        try {
+            service.registrar(data);
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
+        } catch (MusicriticaException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o registro: " + e.getMessage());
+        }
     }
 
     @PutMapping("/atualizar")
