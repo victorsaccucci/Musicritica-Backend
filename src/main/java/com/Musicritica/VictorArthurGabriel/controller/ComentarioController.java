@@ -19,10 +19,24 @@ public class ComentarioController {
     @Autowired
     private ComentarioService service;
 
+    //CRUD completo.
     @PostMapping
     public Comentario salvar (@RequestBody Comentario comentario){
         comentario.setDt_publicacao(Instant.now());
         return service.salvar(comentario);
+    }
+    @GetMapping(value = "/comentarios/{id}")
+    public int quantidadeComentariosPorIdMusica(@PathVariable String id){
+        return service.quantidadeComentariosPorIdMusica(id);
+    }
+    @DeleteMapping(value = "/{usuarioId}/{comentarioId}")
+    public ResponseEntity<String> deletarComentario(@PathVariable Long usuarioId, @PathVariable Long comentarioId){
+        return service.deletarComentario(usuarioId, comentarioId);
+    }
+    @PutMapping("/{usuarioId}/{comentarioId}")
+    public ResponseEntity<String> atualizarComentario(@PathVariable Long usuarioId,@PathVariable Long comentarioId ,@RequestBody String novoComentario) {
+        ResponseEntity<String> response = service.atualizarComentario(usuarioId,comentarioId ,novoComentario);
+        return response;
     }
 
     @GetMapping(value = "/{id}")
@@ -36,12 +50,5 @@ public class ComentarioController {
         return respostas;
     }
 
-    @GetMapping(value = "/comentarios/{id}")
-    public int quantidadeComentariosPorIdMusica(@PathVariable String id){
-        return service.quantidadeComentariosPorIdMusica(id);
-    }
-    @DeleteMapping(value = "/{usuarioId}/{comentarioId}")
-    public ResponseEntity<String> deletarComentario(@PathVariable Long usuarioId, @PathVariable Long comentarioId){
-        return service.deletarComentario(usuarioId, comentarioId);
-    }
+
 }

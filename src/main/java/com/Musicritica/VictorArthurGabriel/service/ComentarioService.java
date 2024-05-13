@@ -45,5 +45,20 @@ public class ComentarioService {
          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Voce não é dono desse comentário");
         }
     }
+
+    public ResponseEntity<String> atualizarComentario(Long usuarioId, Long comentarioId, String novoTexto){
+        Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
+        Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
+        if (comentarioEncontrado == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comentário não encontrado.");
+        }
+        if (usuarioRequisitando.getId() == comentarioEncontrado.getUsuario().getId()) {
+            comentarioEncontrado.setComentario(novoTexto);
+            repository.save(comentarioEncontrado);
+            return ResponseEntity.ok("Comentário atualizado com sucesso.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não é dono desse comentário.");
+        }
+    }
 }
 
