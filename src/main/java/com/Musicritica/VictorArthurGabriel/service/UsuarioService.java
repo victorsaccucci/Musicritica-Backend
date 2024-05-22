@@ -60,16 +60,23 @@ public class UsuarioService implements UserDetailsService{
         String dataFormatada = LocalDateTime.now().format(formatter);
         CargoUsuario cargo = CargoUsuario.USER;
 
-        Resource resource = resourceLoader.getResource("classpath:img/avatar_placeholder.png");
+        Resource avatar_placeholder = resourceLoader.getResource("classpath:img/avatar_placeholder.png");
+        Resource background_placeholder = resourceLoader.getResource("classpath:img/background_placeholder.png");
         byte[] imagem_perfil = null;
-        try (InputStream inputStream = resource.getInputStream()) {
+        byte[] imagem_background = null;
+        try (InputStream inputStream = avatar_placeholder.getInputStream()) {
             imagem_perfil = FileCopyUtils.copyToByteArray(inputStream);
         } catch (IOException e) {
-            // Lidar com a exceção apropriadamente
-            e.printStackTrace();
+            throw new MusicriticaException(e + " /nFalha ao processar dados da imagem de perfil!");
         }
 
-        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, imagem_perfil);
+        try (InputStream inputStream = background_placeholder.getInputStream()) {
+            imagem_background = FileCopyUtils.copyToByteArray(inputStream);
+        } catch (IOException e) {
+            throw new MusicriticaException(e + " /nFalha ao processar dados da imagem de fundo!");
+        }
+
+        Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, imagem_perfil, imagem_background);
 
         repository.save(novoUsuario);
     }
@@ -87,10 +94,9 @@ public class UsuarioService implements UserDetailsService{
             usuario.setImagem_perfil(usuarioUpdateDTO.imagem_perfil().getBytes());
         }
 
-        //TODO IMPLEMENTAR A ATUALIZAÇÃO DA IMAGEM_BACKGROUND
-/*        if (usuarioUpdateDTO.imagem_background() != null) {
-            usuario.setImagem_background(usuarioUpdateDTO.imagem_background());
-        }*/
+        if (usuarioUpdateDTO.imagem_background() != null && !usuarioUpdateDTO.imagem_background().isEmpty()) {
+            usuario.setImagem_background(usuarioUpdateDTO.imagem_background().getBytes());
+        }
 
         repository.save(usuario);
     }

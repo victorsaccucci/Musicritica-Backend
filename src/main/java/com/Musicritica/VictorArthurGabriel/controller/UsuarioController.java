@@ -55,12 +55,13 @@ public class UsuarioController {
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity<?> updateUserDetails(Authentication authentication,
-                                               @RequestPart ("nome") String nome,
-                                               @RequestPart ("imagem_perfil") MultipartFile imagem_perfil) {
+    public ResponseEntity<?> atualizarUsuario(Authentication authentication,
+                                               @RequestPart (value = "nome", required = false) String nome,
+                                               @RequestPart (value = "imagem_perfil", required = false) MultipartFile imagem_perfil,
+                                               @RequestPart (value = "imagem_background", required = false) MultipartFile imagem_background) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        UsuarioUpdateDTO usuarioParaAtualizar = new UsuarioUpdateDTO(nome, imagem_perfil);
+        UsuarioUpdateDTO usuarioParaAtualizar = new UsuarioUpdateDTO(nome, imagem_perfil, imagem_background);
 
         try {
             service.atualizar(userDetails, usuarioParaAtualizar);
@@ -86,7 +87,7 @@ public class UsuarioController {
         return service.econtrarUsuarioPorEmail(email);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/excluir/{id}")
     public boolean excluir(@PathVariable Long id){
         return service.excluir(id);
     }

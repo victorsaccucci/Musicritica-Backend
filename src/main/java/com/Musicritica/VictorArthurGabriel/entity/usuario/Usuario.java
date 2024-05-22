@@ -41,13 +41,14 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     private PasswordResetToken passwordResetToken;
 
-    public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro, byte[] imagem_perfil){
+    public Usuario(String nome, String email, String senha, CargoUsuario role, String dt_cadastro, byte[] imagem_perfil, byte[] imagem_background){
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
         this.dt_cadastro = dt_cadastro;
         this.imagem_perfil = imagem_perfil;
+        this.imagem_background = imagem_background;
     }
 
 
