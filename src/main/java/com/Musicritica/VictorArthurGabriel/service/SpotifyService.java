@@ -2,13 +2,14 @@ package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
 import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.AlbumsResponse;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.*;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsRepository;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsYoutubeRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +32,14 @@ public class SpotifyService {
     private final String SPOTIFY_API_URL_GET_TRACKS = "https://api.spotify.com/v1/tracks?ids=%s";
     private final String SPOTIFY_GENRES_URL = "https://api.spotify.com/v1/recommendations/available-genre-seeds";
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
+    private final String SPOTIFY_10_LIMIT_URL = "https://api.spotify.com/v1/recommendations?limit=10&seed_genres=%s";
     private final String SPOTIFY_GET_ALBUM = "https://api.spotify.com/v1/albums/%s";
+    private final String SPOTIFY_GET_SEVERAL_ALBUMS = "https://api.spotify.com/v1/albums?ids=%s";
     private final RestTemplate restTemplate;
 
 
     private String clientId = "a24ecaa70b0f4260a128e1d4fd9bf16a";
-
-
     private String clientSecret = "a9e53beb4fbf4cb6948f5e8a4fb648e4";
-
     private String accessToken;
 
     private final String SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -155,6 +155,7 @@ public class SpotifyService {
 
         return response.getBody();
     }
+
     public TrackData spotifyDescobrirMusica(String generoPrimario, String generoSecundario) {
         String url = String.format(SPOTIFY_RECOMMENDATION_URL, generoPrimario, generoSecundario);
 
@@ -169,6 +170,67 @@ public class SpotifyService {
                 TrackData.class
         );
         return response.getBody();
+    }
+
+    public List<AlbumBuscado> buscarTodosIdsRecomendacoes(String genero) {
+        // 1. Buscar recomendações
+        String url = String.format(SPOTIFY_10_LIMIT_URL, genero);
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<TrackData> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                TrackData.class
+        );
+
+        TrackData trackData = response.getBody();
+        List<AlbumBuscado> albums = new ArrayList<>();
+
+        if (trackData != null && trackData.getTracks() != null) {
+            // 2. Extrair IDs dos álbuns
+            List<String> albumIds = new ArrayList<>();
+            for (Track track : trackData.getTracks()) {
+                albumIds.add(track.getAlbum().getId());
+            }
+
+            System.out.println("IDs dos Álbuns:");
+            for (String id : albumIds) {
+                System.out.println(id);
+            }
+
+            // 3. Buscar detalhes dos álbuns
+            String idsParam = String.join(",", albumIds);
+            String albumsUrl = String.format(SPOTIFY_GET_SEVERAL_ALBUMS, idsParam);
+
+            ResponseEntity<AlbumsResponse> albumsResponse = restTemplate.exchange(
+                    albumsUrl,
+                    HttpMethod.GET,
+                    entity,
+                    AlbumsResponse.class
+            );
+
+            AlbumsResponse albumsData = albumsResponse.getBody();
+            if (albumsData != null && albumsData.getAlbums() != null) {
+                albums = albumsData.getAlbums();
+            }
+        }
+        return albums;
+    }
+
+    public List<ItemSemAlbum> buscarPrimeiraMusicaDeCadaAlbum(String genero) {
+        List<AlbumBuscado> albums = buscarTodosIdsRecomendacoes(genero);
+        List<ItemSemAlbum> primeiraMusicaDeCadaAlbum = new ArrayList<>();
+
+        for (AlbumBuscado album : albums) {
+            if (album.getTracks() != null && album.getTracks().getItems() != null && !album.getTracks().getItems().isEmpty()) {
+                primeiraMusicaDeCadaAlbum.add(album.getTracks().getItems().get(0));
+            }
+        }
+
+        return primeiraMusicaDeCadaAlbum;
     }
 
     public Genres getAllGenres() {

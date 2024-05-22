@@ -3,6 +3,7 @@ package com.Musicritica.VictorArthurGabriel.controller;
 import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
 import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.ItemSemAlbum;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
@@ -100,6 +101,11 @@ public class SpotifyController {
     @GetMapping(value = "/descobrir/{generoPrimario}/{generoSecundario}")
     public TrackData spotifyDescobrirMusica(@PathVariable String generoPrimario, @PathVariable String generoSecundario){
         return spotifyService.spotifyDescobrirMusica(generoPrimario, generoSecundario);
+    }
+
+    @GetMapping(value = "/recomendacoes/{genero}")
+    public List<ItemSemAlbum> spotifyDescobrirMusica(@PathVariable String genero){
+        return spotifyService.buscarPrimeiraMusicaDeCadaAlbum(genero);
     }
 
     @GetMapping(value = "/buscar/album/{id}")
