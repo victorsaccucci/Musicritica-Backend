@@ -226,12 +226,16 @@ public class SpotifyService {
 
         for (AlbumBuscado album : albums) {
             if (album.getTracks() != null && album.getTracks().getItems() != null && !album.getTracks().getItems().isEmpty()) {
-                primeiraMusicaDeCadaAlbum.add(album.getTracks().getItems().get(0));
+                ItemSemAlbum firstTrack = album.getTracks().getItems().get(0);
+                firstTrack.setImages(album.getImages());
+                primeiraMusicaDeCadaAlbum.add(firstTrack);
             }
         }
 
         return primeiraMusicaDeCadaAlbum;
     }
+
+
 
     public Genres getAllGenres() {
         String url = String.format(SPOTIFY_GENRES_URL);
