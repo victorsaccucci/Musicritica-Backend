@@ -12,4 +12,8 @@ public class DenunciaService {
     public Denuncia salvar(Denuncia denuncia) {
         return repository.save(denuncia);
     }
+
+    public Denuncia fechar(Denuncia denuncia) {
+        return repository.delete(denuncia);
+    }
 }

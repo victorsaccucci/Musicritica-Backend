@@ -26,4 +26,11 @@ public class Denuncia {
     private Comentario comentario;
 
     private String descricao;
+
+    private boolean status;
+
+
+
+
+
 }
