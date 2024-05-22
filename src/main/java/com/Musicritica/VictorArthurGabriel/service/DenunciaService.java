@@ -13,7 +13,7 @@ public class DenunciaService {
         return repository.save(denuncia);
     }
 
-    public Denuncia fechar(Denuncia denuncia) {
+    /*public Denuncia fechar(Denuncia denuncia) {
         return repository.delete(denuncia);
-    }
+    }*/
 }
