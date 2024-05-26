@@ -65,7 +65,7 @@ public class UsuarioController {
 
         try {
             service.atualizar(userDetails, usuarioParaAtualizar);
-            return ResponseEntity.ok("Informações do usuário atualizadas com sucesso.");
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "Informações do usuário atualizadas com sucesso."));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a imagem de perfil.");
         }
