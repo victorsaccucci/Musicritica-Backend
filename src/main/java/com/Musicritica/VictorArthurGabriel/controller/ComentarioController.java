@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/comentario")
@@ -30,14 +32,40 @@ public class ComentarioController {
         return service.quantidadeComentariosPorIdMusica(id);
     }
     @DeleteMapping(value = "/{usuarioId}/{comentarioId}")
-    public ResponseEntity<String> deletarComentario(@PathVariable Long usuarioId, @PathVariable Long comentarioId){
-        return service.deletarComentario(usuarioId, comentarioId);
+    public ResponseEntity<Map<String, String>> deletarComentario(
+            @PathVariable Long usuarioId,
+            @PathVariable Long comentarioId) {
+
+        Map<String, String> response = new HashMap<>();
+        ResponseEntity<String> serviceResponse = service.deletarComentario(usuarioId, comentarioId);
+
+        if (serviceResponse.getStatusCode().is2xxSuccessful()) {
+            response.put("message", "Comentário deletado com sucesso.");
+        } else {
+            response.put("message", serviceResponse.getBody());
+        }
+
+        return new ResponseEntity<>(response, serviceResponse.getStatusCode());
     }
+
     @PutMapping("/{usuarioId}/{comentarioId}")
-    public ResponseEntity<String> atualizarComentario(@PathVariable Long usuarioId,@PathVariable Long comentarioId ,@RequestBody String novoComentario) {
-        ResponseEntity<String> response = service.atualizarComentario(usuarioId,comentarioId ,novoComentario);
-        return response;
+    public ResponseEntity<Map<String, String>> atualizarComentario(
+            @PathVariable Long usuarioId,
+            @PathVariable Long comentarioId,
+            @RequestBody String novoComentario) {
+
+        Map<String, String> response = new HashMap<>();
+        ResponseEntity<String> serviceResponse = service.atualizarComentario(usuarioId, comentarioId, novoComentario);
+
+        if (serviceResponse.getStatusCode().is2xxSuccessful()) {
+            response.put("message", "Comentário atualizado com sucesso.");
+        } else {
+            response.put("message", serviceResponse.getBody());
+        }
+
+        return new ResponseEntity<>(response, serviceResponse.getStatusCode());
     }
+
 
     @GetMapping(value = "/{id}")
     public List<Comentario> encontrarComentarioPorIdMusicaSpotify(@PathVariable String id){

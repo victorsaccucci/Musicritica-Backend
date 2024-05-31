@@ -35,24 +35,30 @@ public class ComentarioService {
         return repository.quantidadeComentarios(id);
     }
 
-    public ResponseEntity<String> deletarComentario(Long usuarioId, Long comentarioId){
+    public ResponseEntity<String> deletarComentario(Long usuarioId, Long comentarioId) {
         Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
-     if(usuarioRequisitando.getId() == comentarioEncontrado.getUsuario().getId()){
-         repository.deleteById(comentarioId);
-         return ResponseEntity.ok("Comentário deletado com sucesso.");
-     }else {
-         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Voce não é dono desse comentário");
+
+        if (comentarioEncontrado == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comentário não encontrado.");
+        }
+
+        if (usuarioRequisitando.getId().equals(comentarioEncontrado.getUsuario().getId())) {
+            repository.deleteById(comentarioId);
+            return ResponseEntity.ok("Comentário deletado com sucesso.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não é dono desse comentário.");
         }
     }
 
-    public ResponseEntity<String> atualizarComentario(Long usuarioId, Long comentarioId, String novoTexto){
+
+    public ResponseEntity<String> atualizarComentario(Long usuarioId, Long comentarioId, String novoTexto) {
         Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
         if (comentarioEncontrado == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comentário não encontrado.");
         }
-        if (usuarioRequisitando.getId() == comentarioEncontrado.getUsuario().getId()) {
+        if (usuarioRequisitando.getId().equals(comentarioEncontrado.getUsuario().getId())) {
             comentarioEncontrado.setComentario(novoTexto);
             repository.save(comentarioEncontrado);
             return ResponseEntity.ok("Comentário atualizado com sucesso.");
@@ -60,5 +66,6 @@ public class ComentarioService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não é dono desse comentário.");
         }
     }
+
 }
 

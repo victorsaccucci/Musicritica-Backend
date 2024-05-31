@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +52,11 @@ public class UsuarioService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email);
+    }
+
+    public List<Usuario> buscarUsuariosPeloNome (String nome) {
+        List<Usuario> usuariosEncontrados = repository.buscarUsuariosPeloNome(nome);
+        return usuariosEncontrados;
     }
 
     public void registrar(@Valid RegistroDTO data) throws MusicriticaException {

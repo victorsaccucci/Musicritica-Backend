@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +32,12 @@ public class UsuarioController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private TokenService tokenService;
+
+    @GetMapping(value = "/buscar/nome/{nome}")
+    public List<Usuario> buscarUsuarioPeloNome(@PathVariable String nome){
+        List<Usuario> usuarioEncontrados = service.buscarUsuariosPeloNome(nome);
+        return usuarioEncontrados;
+    }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
