@@ -10,4 +10,5 @@ public interface MusicaSpotifyRepository extends JpaRepository<MusicaSpotify, Lo
 
     @Query(value = "SELECT * FROM musica_spotify where id_spotify = ?", nativeQuery = true)
     MusicaSpotify encontrarMusicaPorIdSpotify(String id);
+
 }
