@@ -40,6 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/musica/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comentario/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/comentario/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/avaliacao/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/avaliacao/**").permitAll()
+
                         .requestMatchers(HttpMethod.PUT, "/comentario/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/comentario/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/spotify/topChartsYoutube").permitAll()
