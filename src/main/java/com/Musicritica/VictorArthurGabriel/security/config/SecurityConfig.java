@@ -32,12 +32,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuario/redefinirSenha/{token}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuario/atualizar").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/usuario/excluir/{id}").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()//.hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/spotify/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/spotify/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/playlist/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/playlist/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/musica/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/musica/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/comentario/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/comentario/**").permitAll()
 
@@ -46,6 +50,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.PUT, "/comentario/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/comentario/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/spotify/topChartsYoutube").permitAll()
                         .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
                         .anyRequest().authenticated()

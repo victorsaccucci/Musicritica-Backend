@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface MusicaSpotifyRepository extends JpaRepository<MusicaSpotify, Long> {
 
     @Query(value = "SELECT * FROM musica_spotify where id_spotify = ?", nativeQuery = true)
-    MusicaSpotify encontrarMusicaPorIdSpotify(String id);
-
+    MusicaSpotify encontrarMusicaPorIdSpotify(String id_spotify);
 }
