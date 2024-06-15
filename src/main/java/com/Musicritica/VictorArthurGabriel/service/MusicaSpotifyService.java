@@ -19,4 +19,8 @@ public class MusicaSpotifyService {
             return musicaSpotifyRepository.save(musicaSpotify);
         }
     }
+
+    public MusicaSpotify encontrarMusicaPorIdSpotify(String id) {
+        return musicaSpotifyRepository.encontrarMusicaPorIdSpotify(id);
+    }
 }

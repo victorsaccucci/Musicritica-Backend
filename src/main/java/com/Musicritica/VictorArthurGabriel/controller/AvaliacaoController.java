@@ -26,6 +26,7 @@ public class AvaliacaoController {
 
     @PostMapping()
     public Avaliacao salvar(@RequestBody Avaliacao avaliacao) {
+        System.out.println(avaliacao);
         return avaliacaoService.salvar(avaliacao);
     }
     @GetMapping(value = "/{id_spotify}")
@@ -38,4 +39,5 @@ public class AvaliacaoController {
      Avaliacao avaliacoes = avaliacaoService.findByIdAvaliacao(id);
         return avaliacoes;
     }
+
 }
