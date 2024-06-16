@@ -2,13 +2,16 @@ package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.Avaliacao;
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
+import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.AvaliacaoRepository;
 import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,15 +26,21 @@ public class AvaliacaoService {
     @Autowired
     private MusicaSpotifyService musicaSpotifyService;
 
-    public Avaliacao salvar(Avaliacao avaliacao) {
-        MusicaSpotify musica = avaliacao.getMusica();
+    public void salvar(Avaliacao avaliacao) throws MusicriticaException {
+        Avaliacao avaliacaoExistente = avaliacaoRepository.buscarAvaliacaoPorIdMusicaEidUsuario(
+                avaliacao.getUsuario().getId(), avaliacao.getMusica().getId_spotify());
 
-        MusicaSpotify musicaExistente = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(musica.getId_spotify());
-        if (musicaExistente == null) {
-            musicaExistente = musicaSpotifyService.save(musica);
+        if (avaliacaoExistente != null) {
+            throw new MusicriticaException("Já existe uma avaliação com o mesmo id.");
+        } else {
+            MusicaSpotify musica = avaliacao.getMusica();
+            MusicaSpotify musicaExistente = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(musica.getId_spotify());
+            if (musicaExistente == null) {
+                musicaExistente = musicaSpotifyService.save(musica);
+            }
+            avaliacao.setMusica(musicaExistente);
+            avaliacaoRepository.save(avaliacao);
         }
-        avaliacao.setMusica(musicaExistente);
-        return avaliacaoRepository.save(avaliacao);
     }
 
     public List<Double> buscarTodasAvaliacoesPoridMusica(String id_spotify) {
@@ -43,8 +52,8 @@ public class AvaliacaoService {
         return valores;
     }
 
-    public Avaliacao findByIdAvaliacao(Long id) {
-     Avaliacao avaliacoes = avaliacaoRepository.findByIdAvaliacao(id);
-        return avaliacoes;
+    public Avaliacao buscarAvaliacaoPorIdComentario(Long id) {
+     Avaliacao avaliacao = avaliacaoRepository.buscarAvaliacaoPorIdComentario(id);
+        return avaliacao;
     }
 }
