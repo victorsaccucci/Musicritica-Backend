@@ -37,6 +37,16 @@ public class PlaylistController {
         return playlistService.buscarPorIdUsuario(id);
     }
 
+    @GetMapping(value = "/descobertas/{id}")
+    public List<Playlist> buscarDescobertasPorIdUsuario (@PathVariable Long id){
+        return playlistService.buscarDescobertasPorIdUsuario(id);
+    }
+
+    @PostMapping("/descobertas/salvar/{usuarioId}")
+    public void adicionarMusicaNaPlaylistDescobertas(@PathVariable Long usuarioId, @RequestParam String idSpotify, @RequestParam String idMusicaSpotify) {
+        playlistService.verificarEInserirMusicaSpotifyDescobertas(usuarioId, idSpotify,idMusicaSpotify);
+    }
+
     @PostMapping("/verificar")
     public void verificarEInserirMusicaSpotify(@RequestParam String idSpotify, @RequestParam String idMusicaSpotify, @RequestParam Long idPlaylist) {
         playlistService.verificarEInserirMusicaSpotify(idSpotify, idMusicaSpotify, idPlaylist);
@@ -45,6 +55,16 @@ public class PlaylistController {
     @GetMapping(value = "/{id}/tracks")
     public ListaTracksSpotify getPlaylistTracks(@PathVariable Long id) {
         Playlist playlist = playlistService.buscarPorId(id);
+        List<String> trackIds = playlist.getMusicaSpotifyList().stream()
+                .map(MusicaSpotify::getId_spotify)
+                .collect(Collectors.toList());
+
+        return spotifyService.buscarMusicasPorIds(trackIds);
+    }
+
+    @GetMapping(value = "/{usuarioId}/tracks-descobertas")
+    public ListaTracksSpotify getDescobertasTracks(@PathVariable Long usuarioId) {
+        Playlist playlist = (Playlist) playlistService.buscarDescobertasPorIdUsuario(usuarioId);
         List<String> trackIds = playlist.getMusicaSpotifyList().stream()
                 .map(MusicaSpotify::getId_spotify)
                 .collect(Collectors.toList());

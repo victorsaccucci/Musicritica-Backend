@@ -14,8 +14,11 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     @Query(value = "SELECT * FROM playlist WHERE id = ?", nativeQuery = true)
     Playlist buscarPorId (Long id);
 
-    @Query(value = "SELECT * FROM playlist WHERE id_usuario = ?", nativeQuery = true)
+    @Query(value = "SELECT * FROM playlist WHERE id_usuario = ? AND nome <> 'Descobertas'", nativeQuery = true)
     List<Playlist> buscarPorIdUsuario (Long id);
+
+    @Query(value = "SELECT * FROM playlist WHERE id_usuario = ? AND nome = 'Descobertas'", nativeQuery = true)
+    List<Playlist> buscarDescobertasPorIdUsuario (Long id);
 
     @Modifying
     @Query(value = "INSERT INTO musica_spotify (id_spotify) SELECT ? FROM dual WHERE NOT EXISTS (SELECT 1 FROM musica_spotify WHERE id_spotify = ?)", nativeQuery = true)

@@ -48,6 +48,8 @@ public class UsuarioService implements UserDetailsService{
     PasswordEncoder passwordEncoder;
     @Autowired
     ResourceLoader resourceLoader;
+    @Autowired
+    PlaylistService playlistService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -85,6 +87,8 @@ public class UsuarioService implements UserDetailsService{
         Usuario novoUsuario = new Usuario(data.nome(), data.email(), encryptedPassword, cargo, dataFormatada, imagem_perfil, imagem_background);
 
         repository.save(novoUsuario);
+
+        playlistService.descobertas(novoUsuario);
     }
 
     public void atualizar(UserDetails userDetails, UsuarioUpdateDTO usuarioUpdateDTO) throws IOException {
