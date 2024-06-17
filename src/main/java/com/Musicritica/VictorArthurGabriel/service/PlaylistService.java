@@ -64,7 +64,7 @@ public class PlaylistService {
     public List<Playlist> buscarPorIdUsuario(Long id) {
         return playlistRepository.buscarPorIdUsuario(id);
     }
-    public List<Playlist> buscarDescobertasPorIdUsuario(Long usuarioId) {
+    public Playlist buscarDescobertasPorIdUsuario(Long usuarioId) {
         return playlistRepository.buscarDescobertasPorIdUsuario(usuarioId);
     }
 }

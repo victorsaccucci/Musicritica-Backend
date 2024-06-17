@@ -38,7 +38,7 @@ public class PlaylistController {
     }
 
     @GetMapping(value = "/descobertas/{id}")
-    public List<Playlist> buscarDescobertasPorIdUsuario (@PathVariable Long id){
+    public Playlist buscarDescobertasPorIdUsuario (@PathVariable Long id){
         return playlistService.buscarDescobertasPorIdUsuario(id);
     }
 
