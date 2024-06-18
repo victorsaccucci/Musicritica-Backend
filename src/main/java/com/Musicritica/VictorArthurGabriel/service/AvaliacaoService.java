@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.Avaliacao;
+import com.Musicritica.VictorArthurGabriel.entity.MapeamentoNotas;
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.AvaliacaoRepository;
@@ -43,6 +44,13 @@ public class AvaliacaoService {
         }
     }
 
+    public List<MapeamentoNotas> buscarQuantidadePorNota(String idSpotify) {
+        List<Object[]> resultados = avaliacaoRepository.buscarQuantidadePorNota(idSpotify);
+        return resultados.stream()
+                .map(result -> new MapeamentoNotas((Double) result[0], (Long) result[1]))
+                .collect(Collectors.toList());
+    }
+
     public List<Double> buscarTodasAvaliacoesPoridMusica(String id_spotify) {
         List<Avaliacao> avaliacoes = avaliacaoRepository.buscarTodasAvaliacoesPoridMusica(id_spotify);
         List<Double> valores = avaliacoes.stream()
@@ -51,7 +59,10 @@ public class AvaliacaoService {
                 .collect(Collectors.toList());
         return valores;
     }
-
+    public Double buscarMediaPorIdMusica(String id_spotify){
+        Double media = avaliacaoRepository.buscarMediaPorIdMusica(id_spotify);
+        return media;
+    }
     public Avaliacao buscarAvaliacaoPorIdComentario(Long id) {
      Avaliacao avaliacao = avaliacaoRepository.buscarAvaliacaoPorIdComentario(id);
         return avaliacao;

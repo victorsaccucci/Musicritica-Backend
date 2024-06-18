@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.controller;
 
 import com.Musicritica.VictorArthurGabriel.entity.Avaliacao;
+import com.Musicritica.VictorArthurGabriel.entity.MapeamentoNotas;
 import com.Musicritica.VictorArthurGabriel.service.AvaliacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,17 @@ public class AvaliacaoController {
         }
     }
 
+    @GetMapping(value = "/notas/{id_spotify}")
+    public List<MapeamentoNotas> buscarQuantidadePorNota(@PathVariable("id_spotify") String idSpotify) {
+        return avaliacaoService.buscarQuantidadePorNota(idSpotify);
+    }
+
+    @GetMapping(value = "/media/{id_spotify}")
+    public Double buscarMedia(@PathVariable String id_spotify) {
+        Double media = avaliacaoService.buscarMediaPorIdMusica(id_spotify);
+        return media;
+    }
+    
     @GetMapping(value = "/{id_spotify}")
     public List<Double> buscarTodasAvaliacoesPoridMusica(@PathVariable String id_spotify) {
         List<Double> avaliacoes = avaliacaoService.buscarTodasAvaliacoesPoridMusica(id_spotify);
