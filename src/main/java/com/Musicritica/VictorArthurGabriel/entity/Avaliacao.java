@@ -7,6 +7,16 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "avaliacao")
+@SqlResultSetMapping(
+        name = "MapeamentoNotasMapping",
+        classes = @ConstructorResult(
+                targetClass = MapeamentoNotas.class,
+                columns = {
+                        @ColumnResult(name = "nota", type = Double.class),
+                        @ColumnResult(name = "quantidade", type = Long.class)
+                }
+        )
+)
 public class Avaliacao {
 
     @Id
