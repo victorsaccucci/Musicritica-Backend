@@ -39,6 +39,8 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/playlist/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/playlist/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/playlist/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/playlist/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/musica/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/musica/**").permitAll()

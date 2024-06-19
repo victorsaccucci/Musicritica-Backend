@@ -85,4 +85,16 @@ public class PlaylistService {
             throw new MusicriticaException("Você não pode atualizar essa playlist!");
         }
     }
+
+    public void excluir(UserDetails userDetails, Playlist playlistExcluir) throws MusicriticaException {
+        String email = userDetails.getUsername();
+        long usuarioId = usuarioRepository.encontarUsuarioPeloEmail(email);
+
+        Playlist playlistExistente = playlistRepository.buscarPlaylistUsuario(usuarioId, playlistExcluir.getId());
+        if (playlistExistente != null) {
+            playlistRepository.deleteById(playlistExcluir.getId());
+        } else {
+            throw new MusicriticaException("Você não pode excluir essa playlist!");
+        }
+    }
 }

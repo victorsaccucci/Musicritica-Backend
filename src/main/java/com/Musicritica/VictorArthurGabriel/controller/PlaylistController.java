@@ -81,11 +81,22 @@ public class PlaylistController {
         try{
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             playlistService.atualizar(userDetails, playlistAtualizar);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("Playlist atualizada com sucesso.");
         } catch (MusicriticaException e){
-            return ResponseEntity.badRequest().body("Erro ao atualizar a playlist: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Erro ao atualizar a playlist: \n" + e.getMessage());
         }
     }
 
-    //TODO DELETE PLAYLIST && DELETE MUSICA DA PLAYLIST
+    @DeleteMapping(value = "/excluir")
+    public ResponseEntity<String> excluir(Authentication authentication, @RequestBody Playlist playlistExcluir){
+        try{
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            playlistService.excluir(userDetails, playlistExcluir);
+            return ResponseEntity.ok().body("Playlist excluída com sucesso.");
+        } catch(MusicriticaException e){
+            return ResponseEntity.badRequest().body("Erro ao excluir playlist: \n" + e.getMessage());
+        }
+    }
+
+    //TODO DELETE MUSICA DA PLAYLIST
 }
