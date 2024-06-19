@@ -3,9 +3,13 @@ package com.Musicritica.VictorArthurGabriel.controller;
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
+import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.service.PlaylistService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,11 +68,24 @@ public class PlaylistController {
 
     @GetMapping(value = "/{usuarioId}/tracks-descobertas")
     public ListaTracksSpotify getDescobertasTracks(@PathVariable Long usuarioId) {
-        Playlist playlist = (Playlist) playlistService.buscarDescobertasPorIdUsuario(usuarioId);
+        Playlist playlist = playlistService.buscarDescobertasPorIdUsuario(usuarioId);
         List<String> trackIds = playlist.getMusicaSpotifyList().stream()
                 .map(MusicaSpotify::getId_spotify)
                 .collect(Collectors.toList());
 
         return spotifyService.buscarMusicasPorIds(trackIds);
     }
+
+    @PutMapping(value = "/atualizar")
+    public ResponseEntity<String> atualizar(Authentication authentication, @RequestBody Playlist playlistAtualizar) {
+        try{
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            playlistService.atualizar(userDetails, playlistAtualizar);
+            return ResponseEntity.ok().build();
+        } catch (MusicriticaException e){
+            return ResponseEntity.badRequest().body("Erro ao atualizar a playlist: " + e.getMessage());
+        }
+    }
+
+    //TODO DELETE PLAYLIST && DELETE MUSICA DA PLAYLIST
 }
