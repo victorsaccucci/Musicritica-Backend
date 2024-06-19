@@ -6,6 +6,7 @@ import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.service.TokenService;
 import com.Musicritica.VictorArthurGabriel.service.UsuarioService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,14 @@ public class UsuarioController {
     @Autowired
     private TokenService tokenService;
 
+
     @GetMapping(value = "/buscar/nome/{nome}")
-    public List<Usuario> buscarUsuarioPeloNome(@PathVariable String nome){
-        List<Usuario> usuarioEncontrados = service.buscarUsuariosPeloNome(nome);
-        return usuarioEncontrados;
+    public List<Usuario> buscarUsuarioPeloNome(
+            @PathVariable String nome,
+            @RequestParam int limit,
+            @RequestParam int offset) {
+
+        return service.buscarUsuariosPeloNome(nome, limit, offset);
     }
 
     @PostMapping("/login")
