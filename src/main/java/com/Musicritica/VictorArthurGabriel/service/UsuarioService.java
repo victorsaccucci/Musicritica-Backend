@@ -56,9 +56,8 @@ public class UsuarioService implements UserDetailsService{
         return repository.findByEmail(email);
     }
 
-    public List<Usuario> buscarUsuariosPeloNome (String nome) {
-        List<Usuario> usuariosEncontrados = repository.buscarUsuariosPeloNome(nome);
-        return usuariosEncontrados;
+    public List<Usuario> buscarUsuariosPeloNome(String nome, int limit, int offset) {
+        return repository.buscarUsuariosPeloNome(nome, limit, offset);
     }
 
     public void registrar(@Valid RegistroDTO data) throws MusicriticaException {
