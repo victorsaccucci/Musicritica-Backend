@@ -3,11 +3,14 @@ package com.Musicritica.VictorArthurGabriel.service;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
+import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.repository.PlaylistRepository;
 import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
+import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +24,9 @@ public class PlaylistService {
 
     @Autowired
     private MusicaSpotifyRepository musicaSpotifyRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public Playlist salvar(Playlist playlist) {
         List<MusicaSpotify> musicasPersistidas = new ArrayList<>();
@@ -66,5 +72,17 @@ public class PlaylistService {
     }
     public Playlist buscarDescobertasPorIdUsuario(Long usuarioId) {
         return playlistRepository.buscarDescobertasPorIdUsuario(usuarioId);
+    }
+
+    public void atualizar(UserDetails userDetails, Playlist playlistAtualizar) throws MusicriticaException {
+        String email = userDetails.getUsername();
+        long usuarioId = usuarioRepository.encontarUsuarioPeloEmail(email);
+
+        Playlist playlistExistente = playlistRepository.buscarPlaylistUsuario(usuarioId, playlistAtualizar.getId());
+        if (playlistExistente != null) {
+            playlistRepository.atualizarNome(playlistAtualizar.getNome(), playlistAtualizar.getId());
+        } else {
+            throw new MusicriticaException("Você não pode atualizar essa playlist!");
+        }
     }
 }
