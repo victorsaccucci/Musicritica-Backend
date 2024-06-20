@@ -97,4 +97,17 @@ public class PlaylistService {
             throw new MusicriticaException("Você não pode excluir essa playlist!");
         }
     }
+
+    public void excluirMusica(UserDetails userDetails, Playlist playlistSelecionada, Long idMusicaSpotify) throws MusicriticaException {
+        String email = userDetails.getUsername();
+        long usuarioId = usuarioRepository.encontarUsuarioPeloEmail(email);
+
+        Playlist playlistExistente = playlistRepository.buscarPlaylistUsuario(usuarioId, playlistSelecionada.getId());
+        if(playlistExistente != null){
+            playlistRepository.excluirMusica(playlistSelecionada.getId(), idMusicaSpotify);
+        } else {
+            throw new MusicriticaException("Você não pode remover músicas dessa playlist!");
+        }
+
+    }
 }

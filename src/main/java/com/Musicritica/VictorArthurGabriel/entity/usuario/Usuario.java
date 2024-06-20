@@ -51,7 +51,7 @@ public class Usuario implements UserDetails {
         this.imagem_background = imagem_background;
     }
 
-
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
