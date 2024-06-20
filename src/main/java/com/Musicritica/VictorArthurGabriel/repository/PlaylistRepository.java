@@ -37,4 +37,9 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     @Transactional
     @Query("UPDATE Playlist p SET p.nome = :nome WHERE p.id = :id")
     void atualizarNome(@Param("nome") String nome, @Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM playlist_musica WHERE playlist_id = ? AND musica_spotify_id = ?", nativeQuery = true)
+    void excluirMusica(Long playlistId, Long musicaSpotifyId);
 }

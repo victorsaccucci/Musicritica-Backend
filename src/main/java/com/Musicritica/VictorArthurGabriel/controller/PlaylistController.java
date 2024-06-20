@@ -6,12 +6,15 @@ import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
 import com.Musicritica.VictorArthurGabriel.service.PlaylistService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,26 +80,35 @@ public class PlaylistController {
     }
 
     @PutMapping(value = "/atualizar")
-    public ResponseEntity<String> atualizar(Authentication authentication, @RequestBody Playlist playlistAtualizar) {
+    public ResponseEntity<?> atualizar(Authentication authentication, @RequestBody Playlist playlistAtualizar) {
         try{
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             playlistService.atualizar(userDetails, playlistAtualizar);
-            return ResponseEntity.ok().body("Playlist atualizada com sucesso.");
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "Playlist atualizada com sucesso!"));
         } catch (MusicriticaException e){
-            return ResponseEntity.badRequest().body("Erro ao atualizar a playlist: \n" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @DeleteMapping(value = "/excluir")
-    public ResponseEntity<String> excluir(Authentication authentication, @RequestBody Playlist playlistExcluir){
+    public ResponseEntity<?> excluir(Authentication authentication, @RequestBody Playlist playlistExcluir){
         try{
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             playlistService.excluir(userDetails, playlistExcluir);
-            return ResponseEntity.ok().body("Playlist excluída com sucesso.");
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "Playlist excluída com sucesso."));
         } catch(MusicriticaException e){
-            return ResponseEntity.badRequest().body("Erro ao excluir playlist: \n" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    //TODO DELETE MUSICA DA PLAYLIST
+    @DeleteMapping(value = "/excluir/musica")
+    public ResponseEntity<?> excluirMusica(Authentication authentication, @RequestBody Playlist playlistSelecionada, @RequestParam Long idMusicaSpotify){
+        try{
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            playlistService.excluirMusica(userDetails, playlistSelecionada, idMusicaSpotify);
+            return ResponseEntity.ok().body(Collections.singletonMap("message", "Música removida com sucesso."));
+        } catch(MusicriticaException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
