@@ -69,6 +69,16 @@ public class PlaylistController {
         return spotifyService.buscarMusicasPorIds(trackIds);
     }
 
+//    @GetMapping(value = "/{id}/tracks")
+//    public ListaTracksSpotify getPlaylistTracks(@PathVariable Long id) {
+//        Playlist playlist = playlistService.buscarPorId(id);
+//        List<String> trackIds = playlist.getMusicaSpotifyList().stream()
+//                .map(MusicaSpotify::getId_spotify)
+//                .collect(Collectors.toList());
+//
+//        return spotifyService.buscarMusicasPorIds(trackIds);
+//    }
+
     @GetMapping(value = "/{usuarioId}/tracks-descobertas")
     public ListaTracksSpotify getDescobertasTracks(@PathVariable Long usuarioId) {
         Playlist playlist = playlistService.buscarDescobertasPorIdUsuario(usuarioId);

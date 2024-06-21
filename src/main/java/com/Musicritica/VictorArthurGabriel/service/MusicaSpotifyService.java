@@ -5,6 +5,8 @@ import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MusicaSpotifyService {
 
@@ -22,5 +24,10 @@ public class MusicaSpotifyService {
 
     public MusicaSpotify encontrarMusicaPorIdSpotify(String id) {
         return musicaSpotifyRepository.encontrarMusicaPorIdSpotify(id);
+    }
+
+    public MusicaSpotify buscarMusicaPorId(Long id) {
+        MusicaSpotify musica = musicaSpotifyRepository.buscarMusicaPorId(id);
+        return musica;
     }
 }
