@@ -25,6 +25,22 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     @Query(value = "SELECT COUNT(*) AS quantidade_comentarios FROM comentario WHERE id_spotify = ?", nativeQuery = true)
     public int quantidadeComentarios(String id);
 
+    @Query(value = "WITH RECURSIVE comentarios_cte AS (\n" +
+            "\n" +
+            "    SELECT id\n" +
+            "    FROM comentario\n" +
+            "    WHERE id_comentario_pai = ?\n" +
+            "    UNION ALL\n" +
+            "\n" +
+            "    SELECT c.id\n" +
+            "    FROM comentario c\n" +
+            "    INNER JOIN comentarios_cte cte ON c.id_comentario_pai = cte.id\n" +
+            ")\n" +
+            "\n" +
+            "SELECT COUNT(*) AS count_associados\n" +
+            "FROM comentarios_cte;", nativeQuery = true)
+    public int quantidadeComentariosPorIdComentarioPai(Long id);
+
     @Query(value = "SELECT * FROM comentario WHERE id = ?", nativeQuery = true)
     public Comentario encontarComentario(Long id);
 }
