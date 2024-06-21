@@ -35,6 +35,10 @@ public class ComentarioService {
         return repository.quantidadeComentarios(id);
     }
 
+    public int quantidadeComentariosPorIdComentarioPai(Long id){
+        return repository.quantidadeComentariosPorIdComentarioPai(id);
+    }
+
     public ResponseEntity<String> deletarComentario(Long usuarioId, Long comentarioId) {
         Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);

@@ -27,10 +27,17 @@ public class ComentarioController {
         comentario.setDt_publicacao(Instant.now());
         return service.salvar(comentario);
     }
+
     @GetMapping(value = "/comentarios/{id}")
     public int quantidadeComentariosPorIdMusica(@PathVariable String id){
         return service.quantidadeComentariosPorIdMusica(id);
     }
+
+    @GetMapping(value = "/pai/{id}")
+    public int quantidadeComentariosPorIdComentarioPai(@PathVariable long id){
+        return service.quantidadeComentariosPorIdComentarioPai(id);
+    }
+
     @DeleteMapping(value = "/{usuarioId}/{comentarioId}")
     public ResponseEntity<Map<String, String>> deletarComentario(
             @PathVariable Long usuarioId,
