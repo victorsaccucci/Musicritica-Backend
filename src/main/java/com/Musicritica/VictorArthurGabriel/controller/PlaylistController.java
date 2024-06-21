@@ -90,11 +90,11 @@ public class PlaylistController {
         }
     }
 
-    @DeleteMapping(value = "/excluir")
-    public ResponseEntity<?> excluir(Authentication authentication, @RequestBody Playlist playlistExcluir){
+    @DeleteMapping(value = "/excluir/{playlistId}")
+    public ResponseEntity<?> excluir(Authentication authentication, @PathVariable Long playlistId){
         try{
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            playlistService.excluir(userDetails, playlistExcluir);
+            playlistService.excluir(userDetails, playlistId);
             return ResponseEntity.ok().body(Collections.singletonMap("message", "Playlist excluída com sucesso."));
         } catch(MusicriticaException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

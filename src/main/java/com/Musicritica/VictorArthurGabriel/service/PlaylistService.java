@@ -86,13 +86,13 @@ public class PlaylistService {
         }
     }
 
-    public void excluir(UserDetails userDetails, Playlist playlistExcluir) throws MusicriticaException {
+    public void excluir(UserDetails userDetails, Long playlistId) throws MusicriticaException {
         String email = userDetails.getUsername();
         long usuarioId = usuarioRepository.encontarUsuarioPeloEmail(email);
 
-        Playlist playlistExistente = playlistRepository.buscarPlaylistUsuario(usuarioId, playlistExcluir.getId());
+        Playlist playlistExistente = playlistRepository.buscarPlaylistUsuario(usuarioId, playlistId);
         if (playlistExistente != null) {
-            playlistRepository.deleteById(playlistExcluir.getId());
+            playlistRepository.deleteById(playlistId);
         } else {
             throw new MusicriticaException("Você não pode excluir essa playlist!");
         }
