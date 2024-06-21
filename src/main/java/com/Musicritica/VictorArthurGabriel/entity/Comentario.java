@@ -15,7 +15,10 @@ public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 1500)
     private String comentario;
+
     private String idSpotify;
 
     private Instant dt_publicacao;

@@ -47,5 +47,6 @@ public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
             nativeQuery = true)
     List<Object[]> buscarQuantidadePorNota(@Param("idSpotify") String idSpotify);
 
-
+    @Query(value = "SELECT * FROM avaliacao WHERE id_usuario = ?", nativeQuery = true)
+    List<Avaliacao> buscarAvaliacoesPorIdUsuario(Long id_usuario);
 }
