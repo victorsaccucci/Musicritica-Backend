@@ -4,6 +4,7 @@ import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
+import com.Musicritica.VictorArthurGabriel.service.MusicaSpotifyService;
 import com.Musicritica.VictorArthurGabriel.service.PlaylistService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
 import org.apache.coyote.Response;
@@ -28,6 +29,9 @@ public class PlaylistController {
 
     @Autowired
     private SpotifyService spotifyService;
+
+    @Autowired
+    private MusicaSpotifyService musicaSpotifyService;
 
     @PostMapping()
     public Playlist salvar (@RequestBody  Playlist playlist){
@@ -111,11 +115,12 @@ public class PlaylistController {
         }
     }
 
-    @DeleteMapping(value = "/excluir/musica/{playlistId}/{idMusicaSpotify}")
-    public ResponseEntity<?> excluirMusica(Authentication authentication, @PathVariable Long playlistId, @PathVariable Long idMusicaSpotify){
+    @DeleteMapping(value = "/excluir/musica/{playlistId}/{id_spotify}")
+    public ResponseEntity<?> excluirMusica(Authentication authentication, @PathVariable Long playlistId, @PathVariable String id_spotify){
+        MusicaSpotify musicaSpotify = musicaSpotifyService.encontrarMusicaPorIdSpotify(id_spotify);
         try{
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            playlistService.excluirMusica(userDetails, playlistId, idMusicaSpotify);
+            playlistService.excluirMusica(userDetails, playlistId, musicaSpotify.getId());
             return ResponseEntity.ok().body(Collections.singletonMap("message", "Música removida com sucesso."));
         } catch(MusicriticaException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
