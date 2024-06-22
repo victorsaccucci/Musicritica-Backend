@@ -28,4 +28,9 @@ public class MusicaController {
         MusicaSpotify musicaEncontrada = musicaSpotifyService.encontrarMusicaPorIdSpotify(id);
         return musicaEncontrada;
     }
+
+    @PostMapping(value = "/salvar")
+    public MusicaSpotify salvarMusicaSpotify(@RequestBody MusicaSpotify musicaSpotify){
+        return musicaSpotifyService.save(musicaSpotify);
+    }
 }

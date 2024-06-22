@@ -1,5 +1,6 @@
 package com.Musicritica.VictorArthurGabriel.repository;
 
+import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,10 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     @Modifying
     @Query(value = "INSERT INTO musica_spotify (id_spotify) SELECT ? FROM dual WHERE NOT EXISTS (SELECT 1 FROM musica_spotify WHERE id_spotify = ?)", nativeQuery = true)
     void inserirMusicaSpotifySeNecessario(String idSpotify, String idMusicaSpotify);
+
+    @Modifying
+    @Query(value = "INSERT INTO musica_spotify (id_spotify) SELECT ? FROM dual WHERE NOT EXISTS (SELECT 1 FROM musica_spotify WHERE id_spotify = ?)", nativeQuery = true)
+    MusicaSpotify inserirMusicaSpotify(String idSpotify, String idMusicaSpotify);
 
     @Modifying
     @Query(value = "INSERT INTO playlist_musica (playlist_id, musica_spotify_id) SELECT p.id, m.id FROM playlist p CROSS JOIN musica_spotify m WHERE p.id = ? AND m.id_spotify = ?", nativeQuery = true)
