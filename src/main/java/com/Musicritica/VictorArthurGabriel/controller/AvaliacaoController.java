@@ -2,8 +2,11 @@ package com.Musicritica.VictorArthurGabriel.controller;
 
 import com.Musicritica.VictorArthurGabriel.entity.Avaliacao;
 import com.Musicritica.VictorArthurGabriel.entity.MapeamentoNotas;
+import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
+import com.Musicritica.VictorArthurGabriel.repository.PlaylistRepository;
 import com.Musicritica.VictorArthurGabriel.service.AvaliacaoService;
+import com.Musicritica.VictorArthurGabriel.service.MusicaSpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +24,12 @@ public class AvaliacaoController {
 
     @Autowired
     private AvaliacaoService avaliacaoService;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
+
+    @Autowired
+    private MusicaSpotifyService musicaSpotifyService;
 
     @PostMapping()
     public ResponseEntity<?> salvar(@RequestBody Avaliacao avaliacao) {
