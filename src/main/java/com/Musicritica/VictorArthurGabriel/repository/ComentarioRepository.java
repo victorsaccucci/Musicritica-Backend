@@ -43,4 +43,9 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
 
     @Query(value = "SELECT * FROM comentario WHERE id = ?", nativeQuery = true)
     public Comentario encontarComentario(Long id);
+
+
+    @Query(value = "SELECT * FROM comentario WHERE id = ?", nativeQuery = true)
+    public Comentario buscarComentarioPorId(Long id);
+
 }

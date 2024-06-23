@@ -56,6 +56,10 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/spotify/topChartsYoutube").permitAll()
                         .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/denuncia/*/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
