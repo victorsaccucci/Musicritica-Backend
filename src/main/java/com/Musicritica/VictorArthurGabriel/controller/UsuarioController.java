@@ -40,7 +40,6 @@ public class UsuarioController {
             @PathVariable String nome,
             @RequestParam int limit,
             @RequestParam int offset) {
-
         return service.buscarUsuariosPeloNome(nome, limit, offset);
     }
 
