@@ -21,4 +21,7 @@ public class DenunciaService {
         return repository.findAll();
     }
 
+    public List<Denuncia> buscarPorNome(String nome) {
+        return repository.buscarPorNome(nome);
+    }
 }
