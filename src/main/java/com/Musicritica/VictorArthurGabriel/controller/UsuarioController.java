@@ -103,15 +103,23 @@ public class UsuarioController {
     }
 
     @PostMapping("/esqueceuSenha")
-    public ResponseEntity<String> forgotPassword(@RequestBody UsuarioDTO data) throws MusicriticaException {
-       String response = service.forgotPassword(data);
-       return ResponseEntity.ok(response);
+    public ResponseEntity<String> forgotPassword(@RequestBody UsuarioDTO data) {
+        try {
+            String response = service.forgotPassword(data);
+            return ResponseEntity.ok("{ \"message\": \"E-mail enviado com sucesso.\" }");
+        } catch (MusicriticaException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{ \"message\": \"Erro ao processar solicitação: " + e.getMessage() + "\" }");
+        }
     }
 
     @PostMapping("/redefinirSenha/{token}")
-    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
-        service.resetPassword(token, usuarioDTO);
-        return ResponseEntity.ok("Senha redefinida com sucesso.");
+    public ResponseEntity<String> resetPassword(@PathVariable String token, @RequestBody UsuarioDTO usuarioDTO) throws MusicriticaException {
+        try {
+            service.resetPassword(token, usuarioDTO);
+            return ResponseEntity.ok("{ \"message\": \"Senha redefinida com sucesso.\" }");
+        } catch (MusicriticaException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{ \"message\": \"Erro ao redefinir senha: " + e.getMessage() + "\" }");
+        }
     }
 
 }
