@@ -77,4 +77,11 @@ public class DenunciaController {
         List <Denuncia> denuncias = service.listarTodos();
         return denuncias;
     }
+
+    @GetMapping(value = "/buscar/{nome}")
+    public List<Denuncia> buscarPorNome(@PathVariable String nome) {
+
+        List <Denuncia> denuncias = service.buscarPorNome(nome);
+        return denuncias;
+    }
 }
