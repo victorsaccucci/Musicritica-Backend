@@ -71,5 +71,10 @@ public class ComentarioService {
         }
     }
 
+    public Comentario buscarComentarioPorId(Long id) {
+
+        return repository.buscarComentarioPorId(id);
+    }
+
 }
 

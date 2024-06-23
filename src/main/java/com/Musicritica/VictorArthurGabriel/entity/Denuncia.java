@@ -11,7 +11,7 @@ public class Denuncia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "id_usuarioReportado")
@@ -25,7 +25,7 @@ public class Denuncia {
     @JoinColumn(name = "id_comentario")
     private Comentario comentario;
 
-    private String descricao;
+    private String dt_denuncia;
 
     private boolean status;
 

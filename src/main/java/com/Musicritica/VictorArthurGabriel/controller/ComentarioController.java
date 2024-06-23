@@ -85,5 +85,11 @@ public class ComentarioController {
         return respostas;
     }
 
+    @GetMapping(value = "/buscarPorId/{id}")
+    public Comentario buscarComentarioPorId(@PathVariable Long id) {
+
+        return service.buscarComentarioPorId(id);
+
+    }
 
 }
