@@ -5,6 +5,7 @@ import com.Musicritica.VictorArthurGabriel.entity.Denuncia;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.service.DenunciaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,9 @@ public class DenunciaController {
 
     @Autowired
     private UsuarioController usuarioController;
+
+    private final SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @PostMapping(value = "/{usuarioId}/{comentarioId}")
     public ResponseEntity<?> salvar(@PathVariable Long usuarioId,
@@ -56,7 +60,7 @@ public class DenunciaController {
             denuncia.setUsuarioReportado(usuarioReportado);
             denuncia.setUsuario(usuario);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String dataFormatada = formatter.format(new Date());
             denuncia.setDt_denuncia(dataFormatada);
             denuncia.setStatus(true);
@@ -84,4 +88,15 @@ public class DenunciaController {
         List <Denuncia> denuncias = service.buscarPorNome(nome);
         return denuncias;
     }
+
+    @GetMapping("/buscarPorData/{dataInicio}/{dataFim}")
+    public List<Denuncia> buscarPorData(
+            @PathVariable String dataInicio,
+            @PathVariable String dataFim) {
+
+
+        List<Denuncia> denuncias = service.buscarPorData(dataInicio, dataFim);
+        return denuncias;
+    }
+
 }
