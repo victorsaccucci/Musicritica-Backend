@@ -1,7 +1,9 @@
 package com.Musicritica.VictorArthurGabriel.repository;
 
 import com.Musicritica.VictorArthurGabriel.entity.Comentario;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -48,4 +50,14 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     @Query(value = "SELECT * FROM comentario WHERE id = ?", nativeQuery = true)
     public Comentario buscarComentarioPorId(Long id);
 
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Denuncia d WHERE d.comentario.id = :comentarioId")
+    void deleteDenunciasByComentarioId(Long comentarioId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Comentario c WHERE c.id = :comentarioId")
+    void deleteComentarioById(Long comentarioId);
 }

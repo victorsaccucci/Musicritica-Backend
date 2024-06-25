@@ -4,6 +4,7 @@ import com.Musicritica.VictorArthurGabriel.entity.Comentario;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.repository.ComentarioRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public class ComentarioService {
         return repository.quantidadeComentariosPorIdComentarioPai(id);
     }
 
+    @Transactional
     public ResponseEntity<String> deletarComentario(Long usuarioId, Long comentarioId) {
         Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
@@ -48,7 +50,8 @@ public class ComentarioService {
         }
 
         if (usuarioRequisitando.getId().equals(comentarioEncontrado.getUsuario().getId())) {
-            repository.deleteById(comentarioId);
+            repository.deleteDenunciasByComentarioId(comentarioId);
+            repository.deleteComentarioById(comentarioId);
             return ResponseEntity.ok("Comentário deletado com sucesso.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não é dono desse comentário.");
