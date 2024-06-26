@@ -99,4 +99,15 @@ public class DenunciaController {
         return denuncias;
     }
 
+    @PutMapping("/fechar/{id}")
+    public ResponseEntity<?> fecharDenuncia(@PathVariable Long id) {
+
+            boolean isClosed = service.fecharDenuncia(id);
+            if (isClosed) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Denúncia não encontrada");
+            }
+    }
+
 }
