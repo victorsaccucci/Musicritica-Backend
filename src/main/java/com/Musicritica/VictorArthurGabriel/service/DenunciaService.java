@@ -18,7 +18,7 @@ public class DenunciaService {
     }
 
     public List<Denuncia> listarTodos() {
-        return repository.findAll();
+        return repository.listarTodos();
     }
 
     public List<Denuncia> buscarPorNome(String nome) {
@@ -27,5 +27,10 @@ public class DenunciaService {
 
     public List<Denuncia> buscarPorData(String dataInicio, String dataFim) {
         return repository.buscarPorData(dataInicio, dataFim);
+    }
+
+    public boolean fecharDenuncia(Long id) {
+        int rowsUpdated = repository.fecharDenunciaById(id);
+        return rowsUpdated > 0;
     }
 }
