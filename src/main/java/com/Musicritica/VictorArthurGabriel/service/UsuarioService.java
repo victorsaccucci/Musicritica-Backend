@@ -25,6 +25,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -239,5 +240,16 @@ public class UsuarioService implements UserDetailsService{
             tokenRepository.delete(token);
         }
         return hasExpired;
+    }
+
+    public List<Usuario> buscarUsuariosDoMes() {
+        LocalDate inicio = LocalDate.now().withDayOfMonth(1);
+        LocalDate fim = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        String inicioDoMes = inicio.format(formatter);
+        String fimDoMes = fim.format(formatter);
+
+        return repository.findUsuariosDoMes(inicioDoMes, fimDoMes);
     }
 }

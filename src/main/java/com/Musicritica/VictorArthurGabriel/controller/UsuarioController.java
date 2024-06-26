@@ -121,4 +121,10 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/buscarUsuarioDoMes")
+    public ResponseEntity<List<Usuario>> buscarUsuariosDoMes() {
+        List<Usuario> usuarios = service.buscarUsuariosDoMes();
+        return ResponseEntity.ok(usuarios);
+    }
+
 }
