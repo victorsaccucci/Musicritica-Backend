@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,9 +110,15 @@ public class UsuarioService implements UserDetailsService{
         repository.save(usuario);
     }
 
-    public boolean excluir(Long id){
-        repository.deleteById(id);
-        return true;
+    public boolean excluir(UserDetails userDetails, Long id){
+        String email = userDetails.getUsername();
+        Usuario usuario = (Usuario) repository.findByEmail(email);
+        if(usuario.getId() == id){
+            repository.delete(usuario);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public int econtrarUsuarioPorEmail(String email){
