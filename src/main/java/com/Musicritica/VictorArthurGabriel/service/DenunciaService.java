@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.Denuncia;
+import com.Musicritica.VictorArthurGabriel.entity.Musica;
 import com.Musicritica.VictorArthurGabriel.repository.DenunciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,4 +34,6 @@ public class DenunciaService {
         int rowsUpdated = repository.fecharDenunciaById(id);
         return rowsUpdated > 0;
     }
+
+
 }
