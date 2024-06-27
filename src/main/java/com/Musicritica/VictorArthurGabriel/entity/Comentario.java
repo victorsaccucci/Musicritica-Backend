@@ -31,7 +31,5 @@ public class Comentario {
     @ManyToOne
     @JoinColumn(name = "id_comentario_pai")
     private Comentario comentarioPai;
-
-
     
 }

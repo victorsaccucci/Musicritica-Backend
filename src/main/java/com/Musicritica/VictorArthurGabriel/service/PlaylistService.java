@@ -9,7 +9,10 @@ import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.aspectj.apache.bcel.generic.LOOKUPSWITCH;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +55,23 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) {
+    public ResponseEntity<String> verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist)  {
         playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
-        playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
+        MusicaSpotify musicaSpotify = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(idSpotify);
+
+        if (musicaSpotify == null) {
+            return new ResponseEntity<>("Musica inexistente na base de dados", HttpStatus.NOT_FOUND);
+        }
+
+        List<Long> idDeMusicaNaPlaylist = playlistRepository.verificarExistenciaDeAssociacao(idPlaylist);
+        Long idMusica = musicaSpotify.getId();
+
+        if (!idDeMusicaNaPlaylist.contains(idMusica)) {
+            playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
+            return new ResponseEntity<>("Musica inserida na playlist com sucesso", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Erro: Musica já inserida na playlist", HttpStatus.CONFLICT);
+        }
     }
 
     @Transactional

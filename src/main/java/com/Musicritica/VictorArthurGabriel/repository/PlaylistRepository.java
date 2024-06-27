@@ -1,5 +1,4 @@
 package com.Musicritica.VictorArthurGabriel.repository;
-
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
@@ -43,6 +42,9 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     @Transactional
     @Query("UPDATE Playlist p SET p.nome = :nome WHERE p.id = :id")
     void atualizarNome(@Param("nome") String nome, @Param("id") Long id);
+
+    @Query(value = "SELECT playlist_musica.musica_spotify_id FROM playlist_musica WHERE playlist_id = ?", nativeQuery = true)
+    List<Long> verificarExistenciaDeAssociacao(Long playlistId);
 
     @Modifying
     @Transactional
