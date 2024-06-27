@@ -2,6 +2,7 @@ package com.Musicritica.VictorArthurGabriel.controller;
 
 import com.Musicritica.VictorArthurGabriel.entity.Comentario;
 import com.Musicritica.VictorArthurGabriel.entity.Denuncia;
+import com.Musicritica.VictorArthurGabriel.entity.Musica;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import com.Musicritica.VictorArthurGabriel.service.DenunciaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +94,40 @@ public class DenunciaController {
     public List<Denuncia> buscarPorData(
             @PathVariable String dataInicio,
             @PathVariable String dataFim) {
+        // Print the dates in dd/MM/yyyy format
+        String formattedDataInicio = formatToDDMMYYYY(dataInicio);
+        String formattedDataFim = formatToDDMMYYYY(dataFim);
 
+        System.out.println("Data Inicio (dd/MM/yyyy): " + formattedDataInicio);
+        System.out.println("Data Fim (dd/MM/yyyy): " + formattedDataFim);
 
+        // Call the service with the original dates
         List<Denuncia> denuncias = service.buscarPorData(dataInicio, dataFim);
         return denuncias;
     }
+
+    private String formatToDDMMYYYY(String date) {
+        if (date == null || date.isEmpty()) {
+            return "";
+        }
+        String[] parts = date.split("-");
+        if (parts.length != 3) {
+            return date; // return original date if format doesn't match
+        }
+        return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
+
+    @PutMapping("/fechar/{id}")
+    public ResponseEntity<?> fecharDenuncia(@PathVariable Long id) {
+
+            boolean isClosed = service.fecharDenuncia(id);
+            if (isClosed) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Denúncia não encontrada");
+            }
+    }
+
+
 
 }

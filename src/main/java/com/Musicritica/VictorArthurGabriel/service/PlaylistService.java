@@ -9,7 +9,10 @@ import com.Musicritica.VictorArthurGabriel.repository.MusicaSpotifyRepository;
 import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.aspectj.apache.bcel.generic.LOOKUPSWITCH;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -52,24 +55,23 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) throws MusicriticaException {
+    public ResponseEntity<String> verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist)  {
+        playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
         MusicaSpotify musicaSpotify = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(idSpotify);
-        Playlist playlist = playlistRepository.buscarPorId(idPlaylist);
 
         if (musicaSpotify == null) {
-            throw new MusicriticaException("Música não encontrada");
+            return new ResponseEntity<>("Musica inexistente na base de dados", HttpStatus.NOT_FOUND);
         }
 
-        if (playlist == null) {
-            throw new MusicriticaException("Playlist não encontrada");
-        }
+        List<Long> idDeMusicaNaPlaylist = playlistRepository.verificarExistenciaDeAssociacao(idPlaylist);
+        Long idMusica = musicaSpotify.getId();
 
-        if (playlistRepository.verificarExistenciaDeAssociacao(idPlaylist, musicaSpotify.getId())) {
-            throw new MusicriticaException("A música já existe nesta playlist");
+        if (!idDeMusicaNaPlaylist.contains(idMusica)) {
+            playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
+            return new ResponseEntity<>("Musica inserida na playlist com sucesso", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Erro: Musica já inserida na playlist", HttpStatus.CONFLICT);
         }
-
-        playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
-        playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
     }
 
     @Transactional

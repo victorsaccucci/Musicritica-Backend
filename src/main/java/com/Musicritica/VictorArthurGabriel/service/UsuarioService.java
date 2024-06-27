@@ -6,8 +6,8 @@ import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioUpdateDTO;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
-import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
-import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
+import com.Musicritica.VictorArthurGabriel.repository.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,10 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +50,14 @@ public class UsuarioService implements UserDetailsService{
     ResourceLoader resourceLoader;
     @Autowired
     PlaylistService playlistService;
+    @Autowired
+    private DenunciaRepository denunciaRepository;
+    @Autowired
+    private PlaylistRepository playlistRepository;
+    @Autowired
+    private AvaliacaoRepository avaliacaoRepository;
+    @Autowired
+    private ComentarioRepository comentarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -110,9 +118,21 @@ public class UsuarioService implements UserDetailsService{
         repository.save(usuario);
     }
 
-    public boolean excluir(Long id){
-        repository.deleteById(id);
-        return true;
+    @Transactional
+    public boolean excluir(UserDetails userDetails, Long id){
+        String email = userDetails.getUsername();
+        Usuario usuario = (Usuario) repository.findByEmail(email);
+        if(usuario.getId() == id){
+            comentarioRepository.deleteByUsuario(usuario);
+            avaliacaoRepository.deleteByUsuario(usuario);
+            playlistRepository.deleteByUsuario(usuario);
+            denunciaRepository.deleteByUsuario(usuario);
+            denunciaRepository.deleteByUsuarioReportado(usuario);
+            repository.delete(usuario);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public int econtrarUsuarioPorEmail(String email){
@@ -239,5 +259,16 @@ public class UsuarioService implements UserDetailsService{
             tokenRepository.delete(token);
         }
         return hasExpired;
+    }
+
+    public List<Usuario> buscarUsuariosDoMes() {
+        LocalDate inicio = LocalDate.now().withDayOfMonth(1);
+        LocalDate fim = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        String inicioDoMes = inicio.format(formatter);
+        String fimDoMes = fim.format(formatter);
+
+        return repository.findUsuariosDoMes(inicioDoMes, fimDoMes);
     }
 }

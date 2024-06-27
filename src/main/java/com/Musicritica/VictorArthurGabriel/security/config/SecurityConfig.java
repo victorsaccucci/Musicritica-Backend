@@ -31,7 +31,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuario/esqueceuSenha").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/redefinirSenha/{token}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuario/atualizar").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/usuario/excluir/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/usuario/excluir/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/usuario/buscarUsuarioDoMes").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()//.hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/spotify/**").permitAll()
@@ -61,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").permitAll()
 
 
                         .anyRequest().authenticated()

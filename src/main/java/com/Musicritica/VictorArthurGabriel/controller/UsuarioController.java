@@ -80,6 +80,12 @@ public class UsuarioController {
         }
     }
 
+    @DeleteMapping("/excluir/{id}")
+    public boolean excluir(Authentication authentication, @PathVariable Long id){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return service.excluir(userDetails, id);
+    }
+
     @GetMapping("/{id}")
     public Usuario buscarPeloId(@PathVariable Long id) {
         return service.buscarId(id);
@@ -94,11 +100,6 @@ public class UsuarioController {
     @GetMapping(value = "/buscar/{email}")
     public int encontrarUsuarioPorEmail(@PathVariable String email){
         return service.econtrarUsuarioPorEmail(email);
-    }
-
-    @DeleteMapping("/excluir/{id}")
-    public boolean excluir(@PathVariable Long id){
-        return service.excluir(id);
     }
 
     @PostMapping("/esqueceuSenha")
@@ -119,6 +120,12 @@ public class UsuarioController {
         } catch (MusicriticaException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{ \"message\": \"Erro ao redefinir senha: " + e.getMessage() + "\" }");
         }
+    }
+
+    @GetMapping("/buscarUsuarioDoMes")
+    public ResponseEntity<List<Usuario>> buscarUsuariosDoMes() {
+        List<Usuario> usuarios = service.buscarUsuariosDoMes();
+        return ResponseEntity.ok(usuarios);
     }
 
 }

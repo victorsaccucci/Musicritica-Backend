@@ -26,6 +26,5 @@ public class Playlist {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    //VERIFICAR JSON IGNORE AQUI!!!!!!!!!
     private Usuario usuario;
 }

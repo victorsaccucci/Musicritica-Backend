@@ -1,7 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.repository;
-
 import com.Musicritica.VictorArthurGabriel.entity.MusicaSpotify;
 import com.Musicritica.VictorArthurGabriel.entity.Playlist;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -43,11 +43,13 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     @Query("UPDATE Playlist p SET p.nome = :nome WHERE p.id = :id")
     void atualizarNome(@Param("nome") String nome, @Param("id") Long id);
 
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM playlist_musica WHERE playlist_id = :playlistId AND musica_spotify_id = :musicaSpotifyId)", nativeQuery = true)
-    boolean verificarExistenciaDeAssociacao(@Param("playlistId") Long playlistId, @Param("musicaSpotifyId") Long musicaSpotifyId);
+    @Query(value = "SELECT playlist_musica.musica_spotify_id FROM playlist_musica WHERE playlist_id = ?", nativeQuery = true)
+    List<Long> verificarExistenciaDeAssociacao(Long playlistId);
 
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM playlist_musica WHERE playlist_id = ? AND musica_spotify_id = ?", nativeQuery = true)
     void excluirMusica(Long playlistId, Long musicaSpotifyId);
+
+    void deleteByUsuario(Usuario usuario);
 }

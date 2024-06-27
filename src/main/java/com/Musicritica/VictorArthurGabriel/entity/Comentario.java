@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,6 +31,5 @@ public class Comentario {
     @ManyToOne
     @JoinColumn(name = "id_comentario_pai")
     private Comentario comentarioPai;
-
     
 }

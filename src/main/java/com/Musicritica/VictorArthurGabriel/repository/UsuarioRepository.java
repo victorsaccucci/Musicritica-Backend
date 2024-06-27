@@ -27,4 +27,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query(value = "SELECT * FROM usuario WHERE nome LIKE %:nome% LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Usuario> buscarUsuariosPeloNome(@Param("nome") String nome, @Param("limit") int limit, @Param("offset") int offset);
 
+
+    @Query("SELECT u FROM Usuario u WHERE STR_TO_DATE(u.dt_cadastro, '%d-%m-%Y') BETWEEN STR_TO_DATE(:inicio, '%d-%m-%Y') AND STR_TO_DATE(:fim, '%d-%m-%Y')")
+    List<Usuario> findUsuariosDoMes(String inicio, String fim);
 }
