@@ -52,7 +52,22 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) {
+    public void verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) throws MusicriticaException {
+        MusicaSpotify musicaSpotify = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(idSpotify);
+        Playlist playlist = playlistRepository.buscarPorId(idPlaylist);
+
+        if (musicaSpotify == null) {
+            throw new MusicriticaException("Música não encontrada");
+        }
+
+        if (playlist == null) {
+            throw new MusicriticaException("Playlist não encontrada");
+        }
+
+        if (playlistRepository.verificarExistenciaDeAssociacao(idPlaylist, musicaSpotify.getId())) {
+            throw new MusicriticaException("A música já existe nesta playlist");
+        }
+
         playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
         playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
     }
