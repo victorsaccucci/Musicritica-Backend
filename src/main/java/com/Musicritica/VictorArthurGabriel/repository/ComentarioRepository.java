@@ -1,6 +1,7 @@
 package com.Musicritica.VictorArthurGabriel.repository;
 
 import com.Musicritica.VictorArthurGabriel.entity.Comentario;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -60,4 +61,6 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     @Transactional
     @Query("DELETE FROM Comentario c WHERE c.id = :comentarioId")
     void deleteComentarioById(Long comentarioId);
+
+    void deleteByUsuario(Usuario usuario);
 }

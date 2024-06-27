@@ -6,8 +6,8 @@ import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.RegistroDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioDTO;
 import com.Musicritica.VictorArthurGabriel.entity.usuario.DTO.UsuarioUpdateDTO;
 import com.Musicritica.VictorArthurGabriel.exception.MusicriticaException;
-import com.Musicritica.VictorArthurGabriel.repository.PasswordTokenRepository;
-import com.Musicritica.VictorArthurGabriel.repository.UsuarioRepository;
+import com.Musicritica.VictorArthurGabriel.repository.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +50,14 @@ public class UsuarioService implements UserDetailsService{
     ResourceLoader resourceLoader;
     @Autowired
     PlaylistService playlistService;
+    @Autowired
+    private DenunciaRepository denunciaRepository;
+    @Autowired
+    private PlaylistRepository playlistRepository;
+    @Autowired
+    private AvaliacaoRepository avaliacaoRepository;
+    @Autowired
+    private ComentarioRepository comentarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -110,10 +118,16 @@ public class UsuarioService implements UserDetailsService{
         repository.save(usuario);
     }
 
+    @Transactional
     public boolean excluir(UserDetails userDetails, Long id){
         String email = userDetails.getUsername();
         Usuario usuario = (Usuario) repository.findByEmail(email);
         if(usuario.getId() == id){
+            comentarioRepository.deleteByUsuario(usuario);
+            avaliacaoRepository.deleteByUsuario(usuario);
+            playlistRepository.deleteByUsuario(usuario);
+            denunciaRepository.deleteByUsuario(usuario);
+            denunciaRepository.deleteByUsuarioReportado(usuario);
             repository.delete(usuario);
             return true;
         } else {
