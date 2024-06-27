@@ -2,6 +2,7 @@ package com.Musicritica.VictorArthurGabriel.repository;
 
 import com.Musicritica.VictorArthurGabriel.entity.Denuncia;
 import com.Musicritica.VictorArthurGabriel.entity.Musica;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,5 +33,6 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     @Query(value = "SELECT * FROM denuncia WHERE status = true", nativeQuery = true)
     List<Denuncia> listarTodos();
 
-
+    void deleteByUsuario(Usuario usuario);
+    void deleteByUsuarioReportado(Usuario usuarioReportado);
 }

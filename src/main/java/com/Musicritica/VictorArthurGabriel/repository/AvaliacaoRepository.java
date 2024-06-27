@@ -2,6 +2,7 @@ package com.Musicritica.VictorArthurGabriel.repository;
 
 import com.Musicritica.VictorArthurGabriel.entity.Avaliacao;
 import com.Musicritica.VictorArthurGabriel.entity.MapeamentoNotas;
+import com.Musicritica.VictorArthurGabriel.entity.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,4 +50,6 @@ public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
 
     @Query(value = "SELECT * FROM avaliacao WHERE id_usuario = ?", nativeQuery = true)
     List<Avaliacao> buscarAvaliacoesPorIdUsuario(Long id_usuario);
+
+    void deleteByUsuario(Usuario usuario);
 }
