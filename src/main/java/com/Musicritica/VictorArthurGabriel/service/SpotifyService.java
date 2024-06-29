@@ -2,11 +2,8 @@ package com.Musicritica.VictorArthurGabriel.service;
 
 import com.Musicritica.VictorArthurGabriel.entity.TopCharts;
 import com.Musicritica.VictorArthurGabriel.entity.TopChartsYoutube;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.AlbumsResponse;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.*;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.*;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.ListaTracksSpotify;
-import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsRepository;
 import com.Musicritica.VictorArthurGabriel.repository.TopChartsYoutubeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +27,7 @@ public class SpotifyService {
     private final String SPOTIFY_API_URL_WITH_LIMIT = "https://api.spotify.com/v1/search?q=%s&type=track&limit=1";
     private final String SPOTIFY_API_URL = "https://api.spotify.com/v1/search?q=%s&type=track";
     private final String SPOTIFY_API_URL_GET_TRACKS = "https://api.spotify.com/v1/tracks?ids=%s";
+    private final String SPOTIFY_API_URL_GET_TRACK = "https://api.spotify.com/v1/tracks/%s";
     private final String SPOTIFY_GENRES_URL = "https://api.spotify.com/v1/recommendations/available-genre-seeds";
     private final String SPOTIFY_RECOMMENDATION_URL = "https://api.spotify.com/v1/recommendations?limit=1&seed_genres=%s&%s";
     private final String SPOTIFY_10_LIMIT_URL = "https://api.spotify.com/v1/recommendations?limit=10&seed_genres=%s";
@@ -136,6 +134,22 @@ public class SpotifyService {
                 ListaTracksSpotify.class
         );
 
+        return response.getBody();
+    }
+
+    public Item buscarMusicaPorId(String id) {
+        String url = String.format(SPOTIFY_API_URL_GET_TRACK, id);
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Item> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Item.class
+        );
         return response.getBody();
     }
 
