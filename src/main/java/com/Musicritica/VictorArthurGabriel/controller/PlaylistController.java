@@ -59,14 +59,17 @@ public class PlaylistController {
     }
 
     @PostMapping("/verificar")
-    public ResponseEntity<String> adicionarMusica(@RequestParam String idSpotify, @RequestParam String idMusicaSpotify, @RequestParam Long idPlaylist) throws Exception{
+    public ResponseEntity<String> adicionarMusica(@RequestParam String idSpotify, @RequestParam String idMusicaSpotify, @RequestParam Long idPlaylist) {
         try {
             ResponseEntity<String> response = playlistService.verificarEInserirMusicaSpotify(idSpotify, idMusicaSpotify, idPlaylist);
             return response;
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            String jsonError = String.format("{\"message\": \"%s\", \"status\": %d}", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(jsonError);
         }
     }
+
+
 
     @GetMapping(value = "/{id}/tracks")
     public ListaTracksSpotify getPlaylistTracks(@PathVariable Long id) {

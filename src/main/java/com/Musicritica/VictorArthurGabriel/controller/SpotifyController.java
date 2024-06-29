@@ -6,6 +6,7 @@ import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.AlbumBuscado
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.ItemSemAlbum;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Descobrir.TrackData;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.Genres;
+import com.Musicritica.VictorArthurGabriel.entity.spotify.Item;
 import com.Musicritica.VictorArthurGabriel.entity.spotify.SpotifySearchResponse;
 import com.Musicritica.VictorArthurGabriel.service.ScraperService;
 import com.Musicritica.VictorArthurGabriel.service.SpotifyService;
@@ -55,7 +56,7 @@ public class SpotifyController {
     public ResponseEntity<String> saveTopCharts (){
         LocalDate today = LocalDate.now();
 
-        if (today.getDayOfWeek() != DayOfWeek.WEDNESDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.SATURDAY) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às segundas-feiras.");
         }
@@ -78,7 +79,7 @@ public class SpotifyController {
     public ResponseEntity<String> saveYoutubeCharts (){
         LocalDate today = LocalDate.now();
 
-        if (today.getDayOfWeek() != DayOfWeek.THURSDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.SATURDAY) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às Quartas-Feiras.");
         }
@@ -105,6 +106,11 @@ public class SpotifyController {
     @GetMapping(value = "/descobrir/{generoPrimario}/{generoSecundario}")
     public TrackData spotifyDescobrirMusica(@PathVariable String generoPrimario, @PathVariable String generoSecundario){
         return spotifyService.spotifyDescobrirMusica(generoPrimario, generoSecundario);
+    }
+
+    @GetMapping(value = "/buscar/musica/id/{id_spotify}")
+    public Item buscarMusicaPorId(@PathVariable String id_spotify){
+        return spotifyService.buscarMusicaPorId(id_spotify);
     }
 
     @GetMapping(value = "/recomendacoes/{genero}")

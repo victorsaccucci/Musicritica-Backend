@@ -55,12 +55,13 @@ public class PlaylistService {
     }
 
     @Transactional
-    public ResponseEntity<String> verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist)  {
+    public ResponseEntity<String> verificarEInserirMusicaSpotify(String idSpotify, String idMusicaSpotify, Long idPlaylist) {
         playlistRepository.inserirMusicaSpotifySeNecessario(idSpotify, idMusicaSpotify);
         MusicaSpotify musicaSpotify = musicaSpotifyRepository.encontrarMusicaPorIdSpotify(idSpotify);
 
         if (musicaSpotify == null) {
-            return new ResponseEntity<>("Musica inexistente na base de dados", HttpStatus.NOT_FOUND);
+            String jsonError = String.format("{\"message\": \"Musica inexistente na base de dados\", \"status\": %d}", HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(jsonError);
         }
 
         List<Long> idDeMusicaNaPlaylist = playlistRepository.verificarExistenciaDeAssociacao(idPlaylist);
@@ -68,11 +69,15 @@ public class PlaylistService {
 
         if (!idDeMusicaNaPlaylist.contains(idMusica)) {
             playlistRepository.inserirAssociacaoPlaylistMusica(idPlaylist, idMusicaSpotify);
-            return new ResponseEntity<>("Musica inserida na playlist com sucesso", HttpStatus.OK);
+            String jsonMessage = String.format("{\"message\": \"Musica inserida na playlist com sucesso\", \"status\": %d}", HttpStatus.OK.value());
+            return ResponseEntity.ok(jsonMessage);
         } else {
-            return new ResponseEntity<>("Erro: Musica já inserida na playlist", HttpStatus.CONFLICT);
+            String jsonError = String.format("{\"message\": \"Erro: Musica já inserida na playlist\", \"status\": %d}", HttpStatus.CONFLICT.value());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(jsonError);
         }
     }
+
+
 
     @Transactional
     public void verificarEInserirMusicaSpotifyDescobertas(Long usuarioId, String idSpotify, String idMusicaSpotify) {
