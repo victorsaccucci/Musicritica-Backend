@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,8 +14,8 @@ import java.util.List;
 @Repository
 public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
 
-    @Query(value = "SELECT * FROM comentario WHERE id_spotify = ? and id_comentario_pai IS NULL ORDER BY dt_publicacao DESC", nativeQuery = true)
-    public List<Comentario> encontrarComentarioPorIdMusicaSpotify(String id);
+    @Query(value = "SELECT * FROM comentario WHERE id_spotify = :id_spotify and id_comentario_pai IS NULL ORDER BY dt_publicacao DESC LIMIT :limit OFFSET :offset", nativeQuery = true)
+    public List<Comentario> encontrarComentarioPorIdMusicaSpotify(@Param("id_spotify") String id_spotify, @Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = "WITH RECURSIVE ComentariosRecursivos AS ( " +
             "  SELECT * FROM comentario WHERE id_comentario_pai = ? " +

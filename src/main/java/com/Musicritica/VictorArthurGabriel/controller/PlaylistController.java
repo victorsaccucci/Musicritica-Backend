@@ -35,6 +35,8 @@ public class PlaylistController {
 
     @PostMapping()
     public Playlist salvar (@RequestBody  Playlist playlist){
+
+        //verificar nome igual
         return playlistService.salvar(playlist);
     }
 

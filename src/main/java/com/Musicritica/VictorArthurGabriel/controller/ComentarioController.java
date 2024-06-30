@@ -75,8 +75,12 @@ public class ComentarioController {
 
 
     @GetMapping(value = "/{id}")
-    public List<Comentario> encontrarComentarioPorIdMusicaSpotify(@PathVariable String id){
-        List<Comentario> comentarios =  service.comentariosPorIdMusica(id);
+    public List<Comentario> encontrarComentarioPorIdMusicaSpotify(
+            @PathVariable String id,
+            @RequestParam int limit,
+            @RequestParam int offset
+    ){
+        List<Comentario> comentarios =  service.comentariosPorIdMusica(id, limit, offset);
         return comentarios;
     }
     @GetMapping(value = "/respostas/{id}")
