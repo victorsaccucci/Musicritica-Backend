@@ -24,14 +24,16 @@ public class ComentarioService {
         return repository.save(comentario);
     }
 
-    public List<Comentario> comentariosPorIdMusica (String id){
-        List<Comentario> comentarios = repository.encontrarComentarioPorIdMusicaSpotify(id);
+    public List<Comentario> comentariosPorIdMusica (String id, int limit, int offset){
+        List<Comentario> comentarios = repository.encontrarComentarioPorIdMusicaSpotify(id, limit, offset);
         return comentarios;
     }
+
     public List<Comentario> listarRespostas (Long id){
         List<Comentario> respostas = repository.listarRespostas(id);
         return respostas;
     }
+
     public int quantidadeComentariosPorIdMusica(String id){
         return repository.quantidadeComentarios(id);
     }
