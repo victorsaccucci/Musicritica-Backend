@@ -19,9 +19,8 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     List<Denuncia> buscarPorNome(String nome);
 
 
-    @Modifying
-    @Transactional
-    @Query(value = "SELECT * FROM Denuncia d WHERE STR_TO_DATE(d.dt_denuncia, '%d/%m/%Y') BETWEEN STR_TO_DATE(:dataInicio, '%d/%m/%Y') AND STR_TO_DATE(:dataFim, '%d/%m/%Y')", nativeQuery = true)
+
+    @Query(value = "SELECT * FROM denuncia d WHERE d.dt_denuncia BETWEEN :dataInicio AND :dataFim", nativeQuery = true)
     List<Denuncia> buscarPorData(@Param("dataInicio") String dataInicio, @Param("dataFim") String dataFim);
 
 
