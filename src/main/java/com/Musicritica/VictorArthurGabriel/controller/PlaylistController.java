@@ -94,13 +94,16 @@ public class PlaylistController {
 //    }
 
     @GetMapping(value = "/{usuarioId}/tracks-descobertas")
-    public ListaTracksSpotify getDescobertasTracks(@PathVariable Long usuarioId) {
+    public ListaTracksSpotify getDescobertasTracks(@PathVariable Long usuarioId) throws MusicriticaException {
         Playlist playlist = playlistService.buscarDescobertasPorIdUsuario(usuarioId);
         List<String> trackIds = playlist.getMusicaSpotifyList().stream()
                 .map(MusicaSpotify::getId_spotify)
                 .collect(Collectors.toList());
-
-        return spotifyService.buscarMusicasPorIds(trackIds);
+        if(trackIds.isEmpty()){
+            throw new MusicriticaException("Esse usuário não tem músicas descobertas");
+        } else {
+            return spotifyService.buscarMusicasPorIds(trackIds);
+        }
     }
 
     @PutMapping(value = "/atualizar")
