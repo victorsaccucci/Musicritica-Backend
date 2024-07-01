@@ -101,8 +101,8 @@ public class DenunciaController {
         System.out.println("Data Inicio (dd/MM/yyyy): " + formattedDataInicio);
         System.out.println("Data Fim (dd/MM/yyyy): " + formattedDataFim);
 
-        // Call the service with the original dates
-        List<Denuncia> denuncias = service.buscarPorData(dataInicio, dataFim);
+        List<Denuncia> denuncias = service.buscarPorData(formattedDataInicio, formattedDataFim);
+
         return denuncias;
     }
 
@@ -112,7 +112,7 @@ public class DenunciaController {
         }
         String[] parts = date.split("-");
         if (parts.length != 3) {
-            return date; // return original date if format doesn't match
+            return date;
         }
         return parts[2] + "/" + parts[1] + "/" + parts[0];
     }
