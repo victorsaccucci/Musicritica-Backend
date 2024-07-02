@@ -83,6 +83,12 @@ public class DenunciaController {
         return denuncias;
     }
 
+    @GetMapping(value = "/buscarDenunciasFechadas")
+    public List<Denuncia> buscarDenunciasFechadas() {
+        List <Denuncia> denuncias = service.buscarDenunciasFechadas();
+        return denuncias;
+    }
+
     @GetMapping(value = "/buscar/{nome}")
     public List<Denuncia> buscarPorNome(@PathVariable String nome) {
 
