@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
 
-    @Query(value = "SELECT d.* FROM denuncia d JOIN usuario u ON d.id_usuario_reportado = u.id WHERE u.nome LIKE %?1%", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM denuncia d JOIN usuario u ON d.id_usuario_reportado = u.id WHERE u.nome LIKE %?1% AND d.status = true", nativeQuery = true)
     List<Denuncia> buscarPorNome(String nome);
 
 
