@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciasFechadas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciaPorUsuario/*/*").permitAll()
 
 
                         .anyRequest().authenticated()

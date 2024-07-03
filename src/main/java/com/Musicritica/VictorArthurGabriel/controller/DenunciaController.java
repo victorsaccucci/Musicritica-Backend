@@ -39,6 +39,8 @@ public class DenunciaController {
             Denuncia denuncia = new Denuncia();
 
             Comentario comentario = controller.buscarComentarioPorId(comentarioId);
+
+
             if (comentario == null) {
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comentário não encontrado.");
@@ -82,6 +84,16 @@ public class DenunciaController {
         List <Denuncia> denuncias = service.listarTodos();
         return denuncias;
     }
+
+    @GetMapping("/buscarDenunciaPorUsuario/{idComentario}/{idUsuarioAutenticado}")
+    public ResponseEntity<Boolean> verificarDenunciaExistente(
+            @PathVariable Long idComentario,
+            @PathVariable Long idUsuarioAutenticado) {
+
+        boolean existe = service.verificarDenunciaExistente(idComentario, idUsuarioAutenticado);
+        return ResponseEntity.ok(existe);
+    }
+
 
     @GetMapping(value = "/buscarDenunciasFechadas")
     public List<Denuncia> buscarDenunciasFechadas() {

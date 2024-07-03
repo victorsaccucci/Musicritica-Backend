@@ -34,6 +34,12 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
 
     @Query(value = "SELECT * FROM denuncia WHERE status = false", nativeQuery = true)
     List<Denuncia> buscarDenunciasFechadas();
+
     void deleteByUsuario(Usuario usuario);
     void deleteByUsuarioReportado(Usuario usuarioReportado);
+
+    @Query("SELECT (COUNT(d) > 0) FROM Denuncia d WHERE d.comentario.id = :comentarioId AND d.usuario.id = :usuarioId")
+    boolean BuscarDenunciaPorUsuario(@Param("comentarioId") Long comentarioId, @Param("usuarioId") Long usuarioId);
+
+
 }
