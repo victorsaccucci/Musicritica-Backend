@@ -76,7 +76,7 @@ public class UsuarioService implements UserDetailsService{
         CargoUsuario cargo = CargoUsuario.USER;
 
         Resource avatar_placeholder = resourceLoader.getResource("classpath:img/avatar_placeholder.png");
-        Resource background_placeholder = resourceLoader.getResource("classpath:img/background_placeholder.png");
+        Resource background_placeholder = resourceLoader.getResource("classpath:img/background_placeholder.jpg");
         byte[] imagem_perfil = null;
         byte[] imagem_background = null;
         try (InputStream inputStream = avatar_placeholder.getInputStream()) {
