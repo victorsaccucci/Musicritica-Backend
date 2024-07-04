@@ -83,7 +83,7 @@ public class UsuarioServiceTest {
         Resource avatarPlaceholder = mock(Resource.class);
         Resource backgroundPlaceholder = mock(Resource.class);
         when(resourceLoader.getResource("classpath:img/avatar_placeholder.png")).thenReturn(avatarPlaceholder);
-        when(resourceLoader.getResource("classpath:img/background_placeholder.png")).thenReturn(backgroundPlaceholder);
+        when(resourceLoader.getResource("classpath:img/background_placeholder.jpg")).thenReturn(backgroundPlaceholder);
 
         try {
             when(avatarPlaceholder.getInputStream()).thenReturn(mock(InputStream.class));
