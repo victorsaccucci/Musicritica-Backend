@@ -59,12 +59,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/denuncia/*/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciasFechadas").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciaPorUsuario/*/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciasFechadas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciaPorUsuario/*/*").hasRole("ADMIN")
 
 
                         .anyRequest().authenticated()
