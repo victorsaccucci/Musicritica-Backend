@@ -58,13 +58,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/spotify/topChartsYoutube").permitAll()
                         .requestMatchers(HttpMethod.GET, "/home/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/denuncia/*/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciasFechadas").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciaPorUsuario/*/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/denuncia/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/denuncia/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/denuncia/**").permitAll()
+
+//                        .requestMatchers(HttpMethod.GET, "/denuncia/listarTodos").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/denuncia/buscar/*").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarPorData/*/*").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/denuncia/fechar/*").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciasFechadas").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/denuncia/buscarDenunciaPorUsuario/*/*").hasRole("ADMIN")
 
 
                         .anyRequest().authenticated()

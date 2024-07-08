@@ -63,5 +63,14 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     @Query("DELETE FROM Comentario c WHERE c.id = :comentarioId")
     void deleteComentarioById(Long comentarioId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM comentario WHERE id_comentario_pai = ?;", nativeQuery = true)
+    void deleteAssociacoesByComentarioId(Long id);
+
+    @Transactional
+    @Query(value = "SELECT * FROM comentario WHERE id_comentario_pai = ?;", nativeQuery = true)
+    List<Comentario> encontrarComentarioPorIdComentarioPai(Long id);
+
     void deleteByUsuario(Usuario usuario);
 }

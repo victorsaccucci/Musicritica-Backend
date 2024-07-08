@@ -19,7 +19,10 @@ public class ComentarioService {
     private ComentarioRepository repository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ComentarioRepository comentarioRepository;
 
+    @Transactional
     public Comentario salvar(Comentario comentario){
         return repository.save(comentario);
     }
@@ -44,7 +47,7 @@ public class ComentarioService {
 
     @Transactional
     public ResponseEntity<String> deletarComentario(Long usuarioId, Long comentarioId) {
-        Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
+        Comentario comentarioEncontrado = comentarioRepository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
 
         if (comentarioEncontrado == null) {
@@ -52,15 +55,27 @@ public class ComentarioService {
         }
 
         if (usuarioRequisitando.getId().equals(comentarioEncontrado.getUsuario().getId())) {
-            repository.deleteDenunciasByComentarioId(comentarioId);
-            repository.deleteComentarioById(comentarioId);
+            deletarAssociacoesRecursivamente(comentarioId);
+            comentarioRepository.deleteDenunciasByComentarioId(comentarioId);
+            comentarioRepository.deleteById(comentarioId);
+
             return ResponseEntity.ok("Comentário deletado com sucesso.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não é dono desse comentário.");
         }
     }
 
+    @Transactional
+    public void deletarAssociacoesRecursivamente(Long comentarioId) {
+        List<Comentario> respostas = comentarioRepository.encontrarComentarioPorIdComentarioPai(comentarioId);
+        for (Comentario resposta : respostas) {
+            deletarAssociacoesRecursivamente(resposta.getId());
+            comentarioRepository.deleteDenunciasByComentarioId(resposta.getId());
+            comentarioRepository.deleteById(resposta.getId());
+        }
+    }
 
+    @Transactional
     public ResponseEntity<String> atualizarComentario(Long usuarioId, Long comentarioId, String novoTexto) {
         Comentario comentarioEncontrado = repository.encontarComentario(comentarioId);
         Usuario usuarioRequisitando = usuarioRepository.buscarPeloId(usuarioId);
