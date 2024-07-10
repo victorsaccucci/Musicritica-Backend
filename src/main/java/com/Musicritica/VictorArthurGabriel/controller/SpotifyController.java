@@ -56,7 +56,7 @@ public class SpotifyController {
     public ResponseEntity<String> saveTopCharts (){
         LocalDate today = LocalDate.now();
 
-        if (today.getDayOfWeek() != DayOfWeek.THURSDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.TUESDAY) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às segundas-feiras.");
         }
@@ -79,7 +79,7 @@ public class SpotifyController {
     public ResponseEntity<String> saveYoutubeCharts (){
         LocalDate today = LocalDate.now();
 
-        if (today.getDayOfWeek() != DayOfWeek.THURSDAY) {
+        if (today.getDayOfWeek() != DayOfWeek.TUESDAY) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este método só pode ser chamado às Quartas-Feiras.");
         }
